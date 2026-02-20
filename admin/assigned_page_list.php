@@ -1,0 +1,42 @@
+		
+		<div class="col-md-12"> 
+				<h4> <strong class="text-success text-capitalize"> assigned pages <i class="fa fa-subway">  </i> &nbsp;  </strong></h4>
+				<div class="mypriv">
+				<?php
+				$unique_pages = $dbm->getFields($dbm->select_distinct('groupid','priviledges',array('role_id'=>$_SESSION['cur_role']??"",'status'=>'active'),array('groupid'),'and','asc'),array('groupid'));
+				#$uniques  = @mysql_query("select distinct groupid from pages where pages.status = 'active' and not exists (select * from priviledges where priviledges.status = 'active' and pages.url = priviledges.url and priviledges.role_id = '".$_SESSION['cur_role']."') order by groupid asc");
+				$uniques  = $mydbm->runBaseQuery("select distinct groupid from pages where pages.status = 'active' and not exists (select * from priviledges where priviledges.status = 'active' and pages.url = priviledges.url and priviledges.role_id = '".$_SESSION['cur_role']."') order by groupid asc");
+				$admin = new User("users");	
+				 
+				 if(!is_null($unique_pages)){
+					foreach($unique_pages['groupid'] as $up){
+						$groupinfo = $admin->page_group_info($up); 
+						$priviledges = $dbm->getFields($dbm->select("priviledges",array('role_id'=>$_SESSION['cur_role'],'groupid'=>$up,'status'=>'active'),array('sn'),'AND','ASC'),array('role_id','url','sn')); 					
+					  ?> 
+						<label class="badge badge-primary"> <?php echo $up; ?></label>  
+						<label class="bold"> &nbsp; <?php echo $groupinfo['groupname'];?> </label>
+					<?php $n = 0; if(!is_null($priviledges))
+				
+						foreach ($priviledges['url']  as $val){ $pg_info = $pmg->page_info($val);  ?>
+							<div class="form-group form-group-inline" style="margin-top:1px; padding-top:1px; margin-bottom:1px; padding-bottom:1px;"> 
+								 <div class="checkbox" title="<?php echo $val; #?>"> 
+									<label class="label-control black" > 
+									 <input type="checkbox" class="checkbox defined" name="roles" id="roles" value="<?php echo $_SESSION['cur_role']."|".$val; ?>" title="<?php echo $_SESSION['cur_role']."|".$val; ?>" /> &nbsp; &nbsp; 
+										 <?php echo $pg_info['title']; #." | <label class='badge badge-success'> ".$pg_info['groupid']."</label>"; ?>
+									</label>
+								 </div> 	 
+							</div>   
+							<?php $n ++; }   # end foreach 
+						 
+					} # end unique_pages group
+				 ?>  
+				 <?php }  ?>
+					  
+					 <div class="form-group">
+						<button type="submit" class="btn btn-warning" name="reverse_page" id="reverse_page"> <i class="fa fa-reply"> </i> &nbsp; reverse page                                                                      
+						</button>
+					</div>
+				</div>
+		
+			</div>  <!-- ./ col-md-12 -->
+			

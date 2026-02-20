@@ -1,0 +1,187 @@
+<?php    require "usercheck.php";	require_once('formsubmit.php');
+ 	//  to update profile
+	if(isset($_POST['update_user_profile'])){				
+		$id = base64_decode(base64_decode($_REQUEST['token']));
+		$data = exclude($_POST,['update_user_profile','role_id','psw']);
+		  $dbm->updateTb('users',$data,['user_id'=>$id]); 
+                  if($_POST['psw']!=""){
+                      $password = password_hash($_POST['psw'], PASSWORD_DEFAULT);
+                       $dbm->updateTb('users',['hash_psw'=>$password,'password'=>$_POST['psw']],['user_id'=>$id]); 
+                  }
+		 echo "<script>alert('Update Successful')</script>"; 
+	}
+  ?> 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+	<?php require "admin_style_link.php";?>   <!-- -->
+
+</head>
+<!-- <body class="sidebar-fixed"> -->
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_horizontal-navbar.html -->
+		<?php require "partials/_horizontal-navbar.php"; ?>
+   
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_sidebar.html -->
+      <?php // require "sidebar_nav.php"; ?>
+		
+      <!-- partial -->
+      <div class="main-panel container">
+        <div class="content-wrapper">  
+		 
+        	<form method="post"> 
+		 <div class="row"> 
+			<div class="col-lg-12 grid-margin stretch-card">
+              <div class="card"> 
+				
+                <div class="card-header">
+					<?php 
+						$token = $dbm->clean($_REQUEST['token']);  
+						$user_id = base64_decode(base64_decode($token));
+						$admin = new User('users'); 
+						$info = $admin->getAll(array('user_id'=>$user_id));  
+						//print "<pre>";
+						// print_r($info); die;
+						if(empty($info)) echo "<script> alert('Invalid Request'); window.location.href='index.php'; </script>";
+						
+						$role = $admin->get_my_roles($user_id); 
+						$my_role = $role['role_id'][0]; 
+						
+						
+					?>
+					<span class="h4 "> <?php echo $this_page['title'];?> &nbsp;  <i class="<?php echo $this_page['icon'];?>"></i>  
+						&nbsp; &nbsp; &nbsp; <span class="h6 text-primary"> <?php echo $info['surname'][0]." ".$info['firstname'][0]." ".$info['midname'][0]." - ".strtoupper($info['user_id'][0]); ?> </span>
+					</span>
+						
+				</div>
+				<div class="card-body">                    
+				 <div class="row">  
+						<div class="col-md-7 offset-1">   <form method="post" action="<?php echo $_SERVER['PHP_SELF'];?>">
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" >  Surname </label>	
+								 <div class="col-sm-8">
+									<input type="text" id="surname" name="surname"  value="<?php echo $info['surname'][0]; ?>" class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" >  First Name </label>	
+								 <div class="col-sm-8">
+									<input type="text" id="firstname" name="firstname"  value="<?php echo $info['firstname'][0];?>" class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+					 
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" >  Middle Name </label>	
+								 <div class="col-sm-8">
+									<input type="text" id="othername" name="midname" value="<?php echo $info['midname'][0];?>" class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" > Sex </label>	
+								 <div class="col-sm-8">
+									 <select class="form-control font-18 border  border-primary newuserform" style="font-size:18px; height:45px;" name="gender" id="sex">
+									  <option value="">...</option>
+									   <option value="male" <?php echo ($info['gender'][0]=="male")?"selected":""; ?>>Male</option>
+									   <option value="female" <?php echo ($info['gender'][0]=="female")?"selected":""; ?>>Female</option>
+									 </select>							 
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" >  Phone Number </label>	
+								 <div class="col-sm-8">
+									<input type="text" id="phone" name="phone" value="<?php echo $info['phone'][0];?>" class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" > Address </label>	
+								 <div class="col-sm-8">
+									<input type="text" id="address" name="address" value="<?php echo $info['address'][0]; ?>" class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" > Email </label>	
+								 <div class="col-sm-8">
+									<input type="email" id="email" name="email" value="<?php echo $info['email'][0];?>"  class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" > Login ID </label>	
+								 <div class="col-sm-8">
+									<input readonly type="text" id="username" name="user_id" value="<?php echo $info['user_id'][0];?>" class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+							
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" >  Designation / Role </label>	
+								 <div class="col-sm-8">
+									 <select class="form-control font-18 border  font-18 border-primary newuserform" style="font-size:14px; height:45px;" name="role_id" id="role_id">
+									  <option value="">...</option>
+									   <?php $roles = $dbm->getFields($dbm->select('roles',array('status'=>'active'),array('name'),'and','asc'),array('name','id','sn')); 
+										   if(!is_null($roles)){ $n = 0;  foreach($roles['id'] as $id){ ?>
+										   <option value="<?php echo $id; ?>" <?php echo ($my_role==$id)?"selected":""; ?> ><?php echo $roles['name'][$n]; ?> </option>
+										   <?php $n++; } #end foreach
+										   } # end not null 
+										   ?>
+									 </select>	  
+								</div>
+							</div>
+							 
+							<div class="form-group row">
+								 <label class="label-control col-sm-4" >  Reset Password  </label>	
+								 <div class="col-sm-8">
+									<input type="text" id="psw" name="psw" class="form-control font-18 border-primary newuserform" />								 
+								</div>
+							</div>
+							
+							<div class="form-group row"> 
+									<button mode="update" type="submit" name="update_user_profile" class="btn btn-primary btn-rounded btn-lg ladda-button btn-block " data-style="zoom-in" >
+										Update Profile 
+									</button>
+								 
+							</div></form>
+						</div> <!-- ./ col-md-8  -->
+						
+						
+					 </div> <!-- ./ row  -->
+                </div>  <!--  ./ card-body -->  
+              </div>   <!--  ./ card -->  
+            </div>
+			  
+          </div> <!-- ./ row --> 
+		 </form>
+            
+		   
+		   
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+         
+       <?php require "footer.php"; ?>
+	   
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <?php require "admin_js_links.php"; ?>
+  
+  <script>
+	
+  </script>
+  <script src="../assets/js/lab_rep_script.js"></script>
+  
+</body>
+
+</html>

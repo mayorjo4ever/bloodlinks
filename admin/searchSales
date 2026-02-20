@@ -1,0 +1,60 @@
+<?php	
+	
+	   
+	################# manage_stock_sale_searches
+		if(isset($_POST['manage_stock_sale_searches'])){
+			$dbm = new DbTool(); 
+			$barcode = $dbm->clean($_POST['barcode']);
+			### /** 
+			 $table = "stock_items"; 
+				$criterials = array('name'=>$text,'barcode'=>$text); 
+				#########
+				$result_01 = $dbm->getFields($dbm->regExpSearch($table, $criterials),
+				array('sn','name','code','description','barcode','purchase_price',
+				'selling_price','date_c','remains')); 
+				 
+			### **/
+			
+			$data = $dbm->getFields($dbm->select('stock_items',array('barcode'=>$barcode,
+			'rec_finalized'=>'yes')),array('name','barcode','purchase_price','sn',
+				'selling_price','qty','date_purchased','rec_finalized','categ_id'));
+			##############
+			if(!is_null($data)){  
+				## add to stock_item_sales  
+				$n = 0; 
+				foreach($data['name'] as $name){  
+				## check if item already exists in sales store 
+					$sales = $dbm->getFields($dbm->select('stock_item_sales',array('barcode'=>$data['barcode'][$n],
+					'sales_finalized'=>'no','sold_by'=>$_SESSION['admUser'])),array('name','barcode','purchase_price','sn',
+					'selling_price','qty','date_sold','sales_finalized','item_id'));
+					### 
+					if(is_null($sales)){
+						$rec = array('name'=>$data['name'][$n],'barcode'=>$data['barcode'][$n],
+						'purchase_price'=>$data['purchase_price'][$n],'item_id'=>$data['sn'][$n],'qty'=>'1',
+						'selling_price'=>$data['selling_price'][$n],'date_sold'=>date('Y-m-d H:i:s',(time()-3600)),'sold_by'=>$_SESSION['admUser']);
+						$dbm->insert('stock_item_sales',$rec);
+					}
+					else {
+						$qty = ($sales['qty'][$n]+1); 
+						$total_price = $qty * $sales['selling_price'][$n];
+						$dbm->updateTb("stock_item_sales", array("qty"=>$qty,'total_price'=>$total_price),
+						array('barcode'=>$data['barcode'][$n],'sales_finalized'=>'no','sold_by'=>$_SESSION['admUser']));						
+					}
+				## display items in carts for sale 
+				?> 	
+				<?php $n++; } ## end foreach ?>
+				<div class="alert alert-success"> 
+					 <span class=""> <?php echo $data['name'][0]." added to cart"; ?>   </span> 
+				</div>  
+				
+				<?php
+			} ## end not null  
+			else { ?>
+				<div class="alert alert-info"> 
+					 <span class=""> no item found  </span> 
+					 <?php var_dump($result_01);?>
+				</div>
+			<?php }
+		}
+		
+		?>

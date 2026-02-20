@@ -1,0 +1,135 @@
+
+ <div class="row">				
+			<div class="col-md-2 " style="float:left;"> 
+			 <center class="bold">
+				 <i class="mdi mdi-account-plus text-info fa-4x"></i>  
+				<br/> Customer details  
+			 </center>
+		</div>
+		
+	
+	 <div class="col-md-10 " style="float:left;"> 
+		<div class="card border border-primary"> 
+		<div class="card-body"> 
+			<form method="post">
+				<div class="row"> 
+					
+					<div class="col-md-6" style="float:left;">						
+						  <div class="form-group row selection">
+							<label for="title" class="col-sm-3 col-form-label"> Surname  <span class="text-danger bold">*</span> </label>
+							<div class="col-sm-9">
+								<div class="input-group">									
+									<input style="font-size:14px; height:45px;" type="text" id="surname" name="surname" value="<?php echo $prev_rec['surname'] ?? ""; ?>" class="form-control border-primary newuserform" placeholder="Surname"> 
+									<div class="input-group-append"><span class="surname_text input-group-text border border-primary"><i class="surname_icon mdi mdi-account-outline"></i></span> </div> 
+								</div>
+							</div> <!-- ./ col-sm-9 -->
+						  </div> <!-- ./ form-group -->
+
+						  <div class="form-group row selection">
+							<label for="title" class="col-sm-3 col-form-label"> Othername  <span class="text-danger bold">*</span> </label>
+							<div class="col-sm-9">
+								<div class="input-group">									
+									<input style="font-size:14px; height:45px;" type="text" id="othername" name="othername" value="<?php echo $prev_rec['othername'] ?? ""; ?>" class="form-control border-primary newuserform" placeholder="Other Name"> 
+									<div class="input-group-append"><span class="othername_text input-group-text border border-primary"><i class="othername_icon mdi mdi-account-outline"></i></span> </div> 
+								</div>
+							</div> <!-- ./ col-sm-9 --> 
+						  </div> <!-- ./ form-group -->
+						  
+						  <div class="form-group row selection">
+							<label for="title" class="col-sm-3 col-form-label"> Age <span class="text-danger bold">*</span> </label>
+							<div class="col-sm-9">
+								 <div class="input-group">									
+									<input type="text" class="form-control border border-primary font-14 newuserform" name="age" id="age" value="<?php echo $prev_rec['age_text'] ?? ""; ?>" placeholder="6 Years" /> 
+									<!--
+									<select class="form-control border-primary age_text" style="font-size:14px; height:44px;" name="age_type" id="age_type">														  												
+										<option value="year" <?php echo ($prev_rec['age_type']=="year")?"selected":""; ?>>Years(s)</option>
+										<option value="month" <?php echo ($prev_rec['age_type']=="month")?"selected":""; ?>>Month(s)</option> 
+										<option value="week" <?php echo ($prev_rec['age_type']=="week")?"selected":""; ?>>Week(s)</option>  
+										<option value="day" <?php echo ($prev_rec['age_type']=="day")?"selected":""; ?>>Day(s)</option>  
+									</select>  -->
+									<div class="input-group-append"><span class="age_text input-group-text border border-primary"><i class="age_icon fa fa-calendar"></i></span> </div> 
+								</div>
+								
+							</div> <!-- ./ col-sm-9 --> 
+						  </div> <!-- ./ form-group -->
+						  
+						  <div class="form-group row selection">
+							<label for="title" class="col-sm-3 col-form-label"> Sex <span class="text-danger bold">*</span> </label>
+							<div class="col-sm-9">
+								 <div class="input-group">									
+									 <select class="form-control border border-primary newuserform" style="font-size:14px; height:45px;" name="sex" id="sex">
+									  <option value="">...</option>
+									   <option value="male" <?php echo (isset($prev_rec) && $prev_rec['sex']=="male")?"selected":""; ?>>Male</option>
+									   <option value="female" <?php echo ($prev_rec['sex']=="female")?"selected":""; ?>>Female</option>
+									 </select>
+									<div class="input-group-append"><span class="sex_text input-group-text border border-primary"><i class="sex_icon fa fa-male "></i></span> </div> 
+								</div>
+							</div> <!-- ./ col-sm-9 --> 
+						  </div> <!-- ./ form-group --> 
+						   
+						  <div class="form-group row selection">
+							<label for="title" class="col-sm-3 col-form-label"> Phone No. <span class="text-danger bold">*</span> </label>
+							<div class="col-sm-9">
+								<div class="input-group">									
+									<input style="font-size:14px; height:45px;" type="text" id="phone" name="phone" value="<?php echo $prev_rec['phone'] ?? ""; ?>" class="form-control border-primary newuserform only-numeric" placeholder=" Phone Number"> 
+									<div class="input-group-append"><span class="phone_text input-group-text border border-primary"><i class="phone_icon fa fa-phone"></i></span> </div> 
+								</div>
+							</div> <!-- ./ col-sm-9 --> 
+						  </div> <!-- ./ form-group --> 
+						  
+					</div> <!-- ./ col-md-6 --> 
+					
+					
+					<div class="col-md-6" style="float:left;">
+						  <div class="form-group row " >
+							<label for="title" class="col-sm-4 col-form-label"> Hospital / Clinic    </label>
+							<div class="col-sm-8">
+								<div class="input-group">									
+									<input style="font-size:14px; height:45px;" type="text" id="hospital" name="hospital" value="<?php echo $prev_rec['hospital'] ?? ""; ?>" class="form-control border-primary newuserform" placeholder="Hospital "> 
+									<div class="input-group-append"><span class="hospital_text input-group-text border border-primary"><i class="hospital_icon mdi mdi-hospital-building"></i></span> </div> 
+								</div>
+							</div> <!-- ./ col-sm-9 -->
+						  </div> <!-- ./ form-group -->
+
+						  <div class="form-group row" >
+							<label for="title" class="col-sm-4 col-form-label"> Referred By:   </label>
+							<div class="col-sm-8"> 
+								 <div class="input-group">									
+									<input style="font-size:14px; height:45px;" type="text" id="doctor" name="doctor" value="<?php echo $prev_rec['doctor'] ?? ""; ?>" class="form-control border-primary newuserform " placeholder="Req.. Doctor "> 
+									<div class="input-group-append"><span class="doctor_text input-group-text border border-primary"><i class="doctor_icon mdi mdi-human-male-female"></i></span> </div> 
+								</div>
+							</div> <!-- ./ col-sm-9 --> 
+						  </div> <!-- ./ form-group -->
+
+						  <div class="form-group row " >
+							<label for="title" class="col-sm-4 col-form-label"> Consultant   </label>
+								<div class="col-sm-8">
+									  <div class="input-group">									
+										<input style="font-size:14px; height:45px;" type="text" id="consultant" name="consultant" value="<?php echo $prev_rec['consultant'] ?? ""; ?>" class="form-control border-primary newuserform" placeholder="Req.. Doctor "> 
+										<div class="input-group-append"><span class="consultant_text input-group-text border border-primary"><i class="consultant_icon mdi mdi-human-male-female"></i></span> </div> 								
+									</div> <!-- ./ col-sm-9 --> 
+								</div> <!-- ./ form-group -->  
+							</div> 
+						 <div class="form-group row " >
+							<label for="title" class="col-sm-4 col-form-label"> Clinical Details   </label>
+								<div class="col-sm-8">
+									  <div class="input-group">									
+										<input style="font-size:14px; height:45px;" type="text" id="clinical_details" name="clinical_details" value="<?php echo $prev_rec['clinical_details'] ?? ""; ?>" class="form-control border-primary newuserform" placeholder="Clinical Details "> 
+										<div class="input-group-append"><span class="clinical_details_text input-group-text border border-primary"><i class="clinical_details_icon fa fa-medkit"></i></span> </div> 								
+									</div> <!-- ./ col-sm-9 --> 
+								</div> <!-- ./ form-group -->  
+							</div> 
+					<div class="col-md-12" style="float:left;">
+					 <div class="form-group row selection">
+							 <button mode="<?php echo $_SESSION['ticket_mode']; #new/update ?>" for="<?php echo $_SESSION['ticket_no'] ?? ""; #new/update ?>" type="button" class="btn btn-info btn-lg btn-rounded btn-block ladda-button creators" data-style="zoom-in" name="save_custom_profile" id="save_custom_profile"> Save and Continue &nbsp; <i class="fa fa-save"> </i>  </button>
+					 </div>
+					</div>
+				
+				</div> 
+			 
+			</form>
+			</div>		
+		</div>		
+	</div>  <!-- ./ col-md-6 -->	
+</div> <!-- ./ row -->
+</div> <!-- ./ row -->

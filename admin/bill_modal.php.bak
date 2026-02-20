@@ -1,0 +1,462 @@
+<!-- Modal 7 for new Laboratory Test category form  -->
+<div style="z-index:-999px" class="modal fade" id="billCategForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title bold text-info text-center text-capitalize"> Add / Update Bill Category  &nbsp; &nbsp; <i class="fa fa-money"> </i> </h4>
+         </div>
+         <div class="modal-body" style="margin-top:0px; padding-top:0px; height:245px;">
+            <div class="row">
+               <div class="col-lg-12 col-lg-offset grid-margin stretch-card">
+                  <div class="card">
+                     <div class="card-body" style="padding-top:2px; margin-top:2px; height:230px;">
+                        <form method = "post">
+                           <span class="bold font-16 text-danger">  </span> <br/> 
+                           <div class="col-md-12" style="height:100px; float:left; " >
+                              <div class="form-group" id="fm20">
+                                 <label class="bold text-info text-capitalize"> Department </label> 
+                                 <div class="input-group " title=" Department ">
+                                    <select class="form-control border border-primary" style="font-size:16px; height:45px;" name="bill_dept_id" id="bill_dept_id">
+                                       <option value="">...</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                       <span class="input-group-text border-primary" style="height:45px;">
+                                       <i class="fa fa-money text-black"></i>
+                                       </span>
+                                    </div>
+                                 </div>
+                                 <span class="bill_dept_idMsg"> </span>
+                              </div>
+                              <!-- ./  form-group --> 
+                              <div class="form-group" id="fm20">
+                                 <label class="bold text-info text-capitalize"> &nbsp; <i class="fa fa-plus"> </i> &nbsp;&nbsp; Bill Category </label> 
+                                 <div class="input-group " title="Bill Category ">
+                                    <input style="font-size:16px; height:45px;" value="" autocomplete="false" type="text" id="billCateg" name="billCateg"  class="form-control border border-primary" placeholder="Immunology, e.t.c">
+                                    <div class="input-group-append">
+                                       <span class="input-group-text border-primary" style="height:45px;">
+                                       <i class="fa fa-pencil text-black"></i>
+                                       </span>
+                                    </div>
+                                 </div>
+                                 <span class="billCategMsg"> </span>
+                              </div>
+                              <!-- ./  form-group -->
+                           </div>
+                           <!-- ./  col-md-4-->				  
+                        </form>
+                     </div>
+                     <!-- ./  card-body --> 
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- ./ modal body -->
+         <div class="modal-footer">
+            <center>
+               <button type="button" class="btn btn-secondary  btn-rounded" data-dismiss="modal"> Close &nbsp; <i class="fa fa-close"> </i>  </button>
+               <button mode="new" type="button" class="btn btn-primary btn-rounded ladda-button creators" data-style="expand-right" name="saveBillCateg" id="saveBillCateg"> Add Bill Category &nbsp; <i class="fa fa-plus"> </i>  </button>
+               <button mode="update" type="button" class="btn btn-warning btn-rounded ladda-button updators" data-style="expand-right" name="updateBillCateg" id="updateBillCateg"> Update Bill Category &nbsp; <i class="fa fa-save"> </i>  </button>
+            </center>
+            <p>&nbsp;</p>
+         </div>
+         <!-- ./ modal-footer --> 
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->	 
+<!-- Modal 8 for new bill type form  -->
+<div style="z-index:-999px" class="modal fade" id="billTypeForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div style="width:45%" class="modal-dialog modal-dialog-centered modal-lg " role="document">
+      <div class="modal-content">
+         <form method = "post">
+            <div class="modal-header">
+               <div class="col-md-10">
+                  <h4 class="modal-title bold text-info text-capitalize"> Add / Update Bill Types  &nbsp; &nbsp; <i class="fa fa-money"> </i>  </h4>
+               </div>
+               <div class="col-md-2  pull-right">	 <button type="button" class="btn btn-outline-danger btn-rounded btn-sm" data-dismiss="modal"><i class="fa fa-close"> </i></button>	</div>
+            </div>
+            <div class="modal-body" style="margin-top:0px; padding-top:0px; height:410px;">
+               <div class="row">
+                  <div class="col-lg-12 col-lg-offset grid-margin stretch-card">
+                     <div class="card">
+                        <div class="card-body" style="padding-top:2px; margin-top:2px; height:410px;">
+                           <span class="bold font-16 text-danger">  </span> <br/> 
+                           <div class="form-group row">
+                              <label for="title" class="col-sm-3 col-form-label"> Department </label>
+                              <div class="col-sm-8">
+                                 <select class="form-control bordered border-primary select-sm  text-dark" style="font-size:16px; height:45px;" name="bill_dept_id2" id="bill_dept_id2">
+                                    <option value="">...</option>
+                                 </select>
+                                 <span class="bill_dept_idMsg2"> </span>
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group -->
+                           <div class="form-group row">
+                              <label for="title" class="col-sm-3 col-form-label"> Category </label>
+                              <div class="col-sm-8">
+                                 <select class="form-control border-primary select-sm text-dark" style="font-size:16px; height:45px;" name="billCateg2" id="billCateg2">
+                                    <option value="">...</option>
+                                 </select>
+                                 <span class="billCategMsg2"> </span>
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group -->
+                           <div class="form-group row">
+                              <label for="title" class="col-sm-3 col-form-label"> Bill Type </label>
+                              <div class="col-sm-8">
+                                 <input style="font-size:16px; height:45px;" value="" autocomplete="false" type="text" id="billType2" name="billType2"  class="form-control  border-primary input-sm" placeholder="eg: Blood Glucose Test, Calcium Test ">  <span class="billTypeMsg2"> </span>
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group -->
+                           <div class="form-group row">
+                              <label for="title" class="col-sm-3 col-form-label"> Test Sample </label>
+                              <div class="col-sm-8">
+                                 <input style="font-size:16px;" type="text" class="form-control border-primary input-sm" id="specimen_sample" value="<?php # echo $_SESSION['']; ?>" placeholder="Specimen Sample"> 
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group -->
+                           <div class="form-group row">
+                              <label for="title" class="col-sm-3 col-form-label"> Estimated Time </label>
+                              <div class="col-sm-8">
+                                 <div class="input-group">
+                                    <input type="text" class="only-numeric form-control border border-primary font-18 input-sm" name="estm_time" id="estm_time" placeholder="30" /> 
+                                    <select class="form-control border-primary select-sm" style="font-size:16px; height:44px;" name="estm_time_type" id="estm_time_type">
+                                       <option value="1">Minute (s)</option>
+                                       <option value="2">Hour (s)</option>
+                                       <option value="3">Day (s)</option>
+                                       <option value="4">Week (s)</option>
+                                       <option value="5">Month (s)</option>
+                                    </select>
+                                 </div>
+                                 <span class="estm_timeMsg"> </span>
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group -->
+                           <div class="form-group row">
+                              <label for="title" class="col-sm-3 col-form-label"> Cost </label>
+                              <div class="col-sm-8">
+                                 <input style="font-size:16px; height:45px;" value="" autocomplete="false" type="text" id="billCost" name="billCost"  class="form-control only-numeric  border-primary input-sm" placeholder="eg: 1500, 3000 "> <span class="billCostMsg"> </span>
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group --> 
+                        </div>
+                        <!-- ./  card-body --> 
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- ./ modal body |   updators creators-->
+            <div class="modal-footer">
+               <button mode="new" type="button" class="btn btn-success btn-lg btn-rounded ladda-button creators" data-style="expand-right" name="saveBillType" id="saveBillType"> Add Bill Type &nbsp; <i class="fa fa-plus"> </i>  </button>
+               <button mode="update" type="button" class="btn btn-warning btn-lg btn-rounded ladda-button updators" data-style="expand-right" name="updateBillType" id="updateBillType"> Update Bill Type &nbsp; <i class="fa fa-save"> </i>  </button>
+               <p>&nbsp;</p>
+            </div>
+            <!-- ./ modal-footer -->
+         </form>
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->	 
+<!-- Modal 7B  for creating different billing department  -->
+<div style="z-index:-999px" class="modal fade" id="billDepartment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <div class="col-md-10">
+               <h4 class="modal-title bold text-info text-capitalize">Add / Create Department &nbsp; &nbsp; <i class="fa fa-building-o"> </i> </h4>
+            </div>
+            <div class="col-md-2  pull-right"> <button type="button" class="btn btn-outline-danger btn-rounded btn-sm" data-dismiss="modal"><i class="fa fa-close"> </i></button>	</div>
+         </div>
+         <div class="modal-body" style="margin-top:0px; padding-top:0px; min-height:auto;">
+            <div class="row">
+               <div class="col-lg-12 col-lg-offset grid-margin stretch-card">
+                  <div class="card">
+                     <div class="card-body">
+                        <form method = "post">
+                           <div class="col-md-12" style="height:70px; float:left; " >
+                              <div class="form-group" id="fm20">
+                                 <label class="bold text-info text-capitalize"> &nbsp; <i class="fa fa-building-o"> </i> &nbsp;&nbsp; Add / Edit Department </label> 
+                                 <div class="input-group " title="Department Name">
+                                    <input style="font-size:16px; height:45px;" value="" autocomplete="false" type="text" id="billDeptForm" name="billDeptForm"  class="form-control border border-primary" placeholder="eg: Laboratory ">
+                                    <div class="input-group-append">
+                                       <span class="input-group-text border border-primary" style="height:45px;">
+                                       <i class="fa fa-pencil text-black"></i>
+                                       </span>
+                                    </div>
+                                 </div>
+                                 <span class="billDeptFormMsg"> </span>
+                              </div>
+                              <!-- ./  form-group -->
+                           </div>
+                           <!-- ./  col-md-4-->				  
+                        </form>
+                     </div>
+                     <!-- ./  card-body --> 
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- ./ modal body -->
+         <div class="modal-footer">
+            <button mode="new"  type="button" class="btn btn-info btn-rounded btn-lg ladda-button creators" data-style="expand-right" name="saveBillDept" id="saveBillDept"> Add Department&nbsp; <i class="fa fa-plus"> </i>  </button>
+            <button mode="update"  type="button" class="btn btn-warning btn-rounded btn-lg ladda-button updators" data-style="expand-right" name="updateBillDept" id="updateBillDept"> Update Department &nbsp; <i class="fa fa-save"> </i>  </button>								
+         </div>
+         <!-- ./ modal-footer -->
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->	
+<!-- Modal 8 for new bill type form  -->
+<div style="z-index:-999px" class="modal fade" id="specimen_bill_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div style="" class="modal-dialog modal-dialog-centered modal-lg " role="document">
+      <div class="modal-content">
+         <form method = "post">
+            <div class="modal-header">
+               <div class="col-md-11">
+                  <h4 class="modal-title bold text-info text-capitalize"> Add More Specimen for Testing  &nbsp; &nbsp; <i class="fa fa-money"> </i>  </h4>
+               </div>
+               <div class="col-md-1  pull-right"> <button type="button" class="btn btn-outline-danger btn-rounded btn-sm" data-dismiss="modal"><i class="fa fa-close"> </i></button>	</div>
+            </div>
+            <div class="modal-body" style="margin-top:0px; padding-top:0px; min-height:100px; height:auto;">
+               <div class="row">
+                  <div class="col-lg-4 col-lg-offset grid-margin stretch-card">
+                     <div class="card">
+                        <div class="card-body" style="padding-top:2px; margin-top:2px; min-height:100px;  height:auto;">
+                           <span class="bold font-16 text-danger">  </span> <br/>  
+                           <div class="form-group row ">
+                              <label class="switch pull-right">  
+                              <input type="checkbox" checked onchange="togBillSearchMode($(this).prop('checked'))">
+                              <span class="slider round"></span>
+                              </label> &nbsp; <span class=" pull-right bold"> Toggle Search &nbsp; &nbsp;  </span>
+                           </div>
+                           <div class="form-group row searching">
+                              <label for="title" class="col-sm-4 col-form-label bold"> Test Type </label>
+                              <div class="col-sm-8">
+                                 <input type="text" class="form-control border-primary" style="font-size:16px; " name="bill_searcher" id="bill_searcher" placeholder="  Test Type / Category " />	
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group --> 
+                           <div class="form-group row font-13 selection-2">
+                              <label for="title" class="col-sm-4 col-form-label bold"> Department </label>
+                              <div class="col-sm-8">
+                                 <select class="form-control border border-primary" style="font-size:16px; " name="customer_bill_dept_id" id="customer_bill_dept_id">
+                                    <option value="">...</option>
+                                 </select>
+                              </div>
+                              <!-- ./ col-sm-9 --> 
+                           </div>
+                           <!-- ./ form-group -->
+                           <div class="form-group row selection-2">
+                              <label for="title" class="col-sm-4 col-form-label bold"> Category </label>
+                              <div class="col-sm-8">
+                                 <select class="form-control border-primary select-sm" style="font-size:16px; " name="customer_billCateg" id="customer_billCateg">
+                                    <option value="">...</option>
+                                 </select>
+                              </div>
+                              <!-- ./ col-sm-9 -->
+                           </div>
+                           <!-- ./ form-group --> 
+                           <div class="form-group row searching search_result_1">
+                              <div class="form-group offset-1">
+                                 <ul class="num_list list-inline "></ul>
+                              </div>
+                           </div>
+                           <!-- ./ form-group --> 
+                           <p class="loader">
+                           <center> <span class="loader"> &nbsp;</span>  </center>
+                           </p>
+                        </div>
+                        <!-- ./  card-body --> 
+						
+                     </div>
+                     <!-- ./  card --> 
+                  </div>
+                  <!-- ./ col-lg-4 -->
+                  <div class="col-lg-8 col-lg-offset grid-margin stretch-card" id="lg_disp">
+                     <div class="card">
+                        <div class="card-body" style="padding-top:2px; margin-top:2px; min-height:100px; height:auto; ">
+                           <div class="disp_content"> </div>
+                        </div>
+                        <!-- ./  card-body -->
+						<div class="card-footer">
+							 <div class="pull-right"> <button type="button" class="btn btn-success btn-sm" data-dismiss="modal">Continue <i class="fa fa-check"> </i> </button>	</div>
+						</div>
+                     </div>
+                     <!-- ./  card --> 
+                  </div>
+                  <!-- ./ col-lg-8 -->
+               </div>
+               <!-- ./ row -->
+            </div>
+            <!-- ./ modal body |   updators creators--> 
+         </form>
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->	 
+<!-- Modal 7 for new Laboratory Test category form  -->
+<div style="z-index:-999px" class="modal fade" id="info_menu" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title bold text-info text-center text-capitalize"> Customer Info  &nbsp; &nbsp; <i class="mdi mdi-account"> </i> </h4>
+         </div>
+         <div class="modal-body" style="margin-top:0px; padding-top:0px; height:280px;">
+            <div class="row">
+               <div class="col-lg-12 col-lg-offset grid-margin stretch-card">
+                  <div class="card">
+                     <div class="card-body" style="padding-top:2px; margin-top:2px; height:270px;">
+                        <div class="col-md-12" style="height:100px; float:left; " >
+                           <ul class="list-star">
+                              <li> <span class="bold"> Ticket No :</span> <span class="ticket_no bold pull-right"> <i class="fa fa-spin fa-spinner"> </i> </span> </li>
+                              <li> <span class="bold"> Name :</span>  <span class="fname pull-right">  </span></li>
+                              <li> <span class="bold"> Age :</span> <span class="age pull-right"> </span> </li>
+                              <li> <span class="bold"> Sex : </span> <span class="sex pull-right"> </span> </li>
+                              <li> <span class="bold"> Refered By:</span> <span class="doctor pull-right"> </span></li>
+                              <li> <span class="bold"> Address:</span> <span class="hospital pull-right"> </span></li>
+                              <hr/>
+                              <li> <span class="bold"> Date Created:</span> <span class="date_c pull-right"> </span> </li>
+                              <li> <span class="bold"> Time Created:</span> <span class="time_c pull-right"> </span> </li>
+                              <li> <span class="bold"> Created By: </span> <span class="c_by pull-right"> </span></li>
+                           </ul>
+                        </div>
+                        <!-- ./  col-md-4-->				  
+                     </div>
+                     <!-- ./  card-body --> 
+                  </div>
+               </div>
+            </div>
+         </div>
+         <!-- ./ modal body -->
+         <div class="modal-footer">
+            <button type="button" onclick="show_spin()" class="btn btn-secondary  btn-rounded" onclick="" data-dismiss="modal"> Close &nbsp; <i class="fa fa-close"> </i>  </button>
+         </div>
+         <!-- ./ modal-footer -->
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->	 
+<!-- Modal 7 for new Laboratory Test category form  -->
+<div style="z-index:-999px" class="modal fade" id="spec_template_view" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title bold text-info text-center text-capitalize"> Result template  &nbsp; &nbsp; <i class="mdi mdi-account"> </i> </h4>
+         </div>
+         <div class="modal-body" style="margin-top:0px; padding-top:0px; height:1200px;">
+            <div class="row">
+               <div class="col-lg-12 col-lg-offset grid-margin stretch-card">
+                  <div class="card">
+                     <div class="card-body" style="padding-top:2px; margin-top:2px; height:1190px;">
+                        <div id="result_template" >
+                        </div>
+                        <!-- ./ result_template -->	 
+                     </div>
+                     <!-- ./  card-body --> 
+                  </div>
+                  <!-- ./  card --> 
+               </div>
+               <!-- ./  col-lg-12 --> 
+            </div>
+            <!-- ./ row --> 
+         </div>
+         <!-- ./ modal body -->
+         <div class="modal-footer"> 
+            <button type="button" onclick="show_spin()" class="btn btn-secondary  btn-rounded" data-dismiss="modal"> Close &nbsp; <i class="fa fa-close"> </i>  </button>
+         </div>
+         <!-- ./ modal-footer -->  
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->	 
+<!-- Modal to view specimen inputed result text form  -->
+<div style="z-index:-999px" class="modal fade" id="spec_raw_inputed_text" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title bold text-info text-center text-capitalize">  Test Type :  &nbsp; <i class="fa fa-medkit"> </i> </h4>
+         </div>
+         <div class="modal-body" style="margin-top:0px; padding-top:0px; height:940px;">
+            <div class="row">
+               <div class="col-lg-12 col-lg-offset grid-margin stretch-card">
+                  <div class="card">
+                     <div class="card-body" style="padding-top:2px; margin-top:2px; height:920px;">
+                        <div id="raw_inputed_text_view">
+                        </div>
+                        <!-- ./ result_template -->	 
+                     </div>
+                     <!-- ./  card-body --> 
+                  </div>
+                  <!-- ./  card --> 
+               </div>
+               <!-- ./  col-lg-12 --> 
+            </div>
+            <!-- ./ row --> 
+         </div>
+         <!-- ./ modal body -->
+         <div class="modal-footer"> 
+            <button type="button" onclick="show_spin()" class="btn btn-secondary  btn-rounded" onclick="" data-dismiss="modal"> Close &nbsp; <i class="fa fa-close"> </i>  </button>
+         </div>
+         <!-- ./ modal-footer -->  
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->	 
+<!-- Modal to update inputed result text form  -->
+<div style="z-index:-999px" class="modal fade" id="spec_text_input_form" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title bold text-info text-center text-capitalize">  Compute Result :  &nbsp; <i class="fa fa-medkit"> </i> </h4>
+         </div>
+         <div class="modal-body" style="margin-top:0px; padding-top:0px; height:740px;">
+            <div class="row">
+               <div class="col-lg-12 col-lg-offset grid-margin stretch-card">
+                  <div class="card">
+                     <div class="card-body" style="padding-top:2px; margin-top:2px; height:720px;">
+                        <form method="post"><div class="form-group">
+                           <label class="col-md-4 bold"> Result Template :  </label>
+                           <div class="col-md-12">  
+                              <textarea id="raw_inputed_text_form" class="form-control"> </textarea>
+                           </div> 
+                        </div>
+						<div class="row"> 
+							<div class="col-md-2 mt-4 mb-4 pb-4 "> Date Performed : </div> 
+							<div class="col-md-4 mt-4 mb-4 pb-4 "><input type="date" name="date_perform_text" id="date_perform_text" class="form-control border border-primary bold font-16 input-sm" title="Date Performed " style="" placeholder="Date Performed " value="" /> </div>
+						</div>
+                        <!-- ./ result_template -->	  
+						</form>
+                     </div>
+                     <!-- ./  card-body --> 
+                  </div>
+                  <!-- ./  card --> 
+               </div>
+               <!-- ./  col-lg-12 --> 
+            </div>
+            <!-- ./ row --> 
+         </div>
+         <!-- ./ modal body -->
+         <div class="modal-footer"> 
+            <button type="button" id="save_specimen_text_result_btn" onclick="save_specimen_text_result()" class="btn btn-primary btn-lg  btn-rounded ladda-button" data-style="zoom-in" data-text="" > Save Result &nbsp; <i class="fa fa-save"> </i>  </button>
+            <button type="button" onclick="" class="btn btn-inverse-danger  btn-rounded" data-dismiss="modal" > Close &nbsp; <i class="fa fa-close"> </i>  </button>
+         </div>
+         <!-- ./ modal-footer -->  
+      </div>
+      <!-- ./ modal-content -->
+   </div>
+</div>
+<!-- *********************************************************************************** -->

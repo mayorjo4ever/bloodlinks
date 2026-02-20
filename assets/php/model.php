@@ -1,0 +1,524 @@
+<?php 		 
+		
+	/// external class methods 
+	class functions{
+		
+		public function swap_text($text){
+			// split text into array 
+			$text = str_replace(",","",$text);
+			$array_a = explode(" ",$text);
+			$array_b = explode(" ",$text); 
+			
+			$tot = count($array_a); 
+			
+			if($tot==1) return $text;
+			 // 2 keys
+			if($tot==2) {
+				$array_a[0] = $array_a[1]; 
+				$array_a[1] = $array_b[0];				
+			}
+			/// 3 keys
+			if($tot==3) {
+				$array_a[0] = $array_a[1]; 
+				$array_a[1] = $array_b[2];
+				$array_a[2] = $array_b[0];
+			}
+			
+			return implode(" ",$array_a);
+			
+		} // end swap_text
+		
+		
+		public function match_name_and_matric($name,$matric){
+			$matric = str_replace("/","",$matric);
+			return $name."".$matric;
+		}
+		// end match_name_matric
+		
+		public function add_pix_ext($text,$type="jpg"){
+			return $text.$type;
+		}
+		// end add_pix_ext
+		
+		public function resort(array $data){
+			
+			$ork = array_keys($data);  // original array keys 
+			$aVal = array(); $n = 0;  // array values 
+					foreach($data as $k=>$v){
+						$aVal[] = $data[$ork[$n]][0];
+						$n++;
+					}
+			return $output = array_combine($ork,$aVal);
+		}
+		/*********************************************************************/
+		
+		function show_img($filename, $dir){
+				if(file_exists($dir."".$filename.".jpg")){
+					echo "<img src='$dir$filename.jpg' class='img img-circle' style='height:40px; width:40px; '/>";
+				}
+				else {
+					echo "<img src='dist/img/default-user.png' class='img img-circle' style='height:40px; width:40px; '/>";
+				}
+			}
+			// end show img
+			
+			function show_sign($filename, $dir){
+				if(file_exists($dir."".$filename.".jpg")){
+					echo "<img src='$dir$filename.jpg' class='img img-circle' style='height:40px; width:40px; '/>";
+				}
+				else {
+					echo "<img src='dist/img/signs.jpg' class='img img-responsive' style='height:40px; width:80px; '/>";
+				}
+			}
+		
+		
+		public function format_date($text,$type='date'){
+			
+			@$date = new DateTime($text);
+			$output = "";
+			
+			switch($type){
+					case 'date': $output = $date->format('D jS M, Y' ); break;
+					case 'datetime': $output = $date->format('D jS M, Y - g:i A' ); break;
+					case 'time': $output = $date->format('g:i s A' ); break; 
+			} 
+			
+			return ($text!="")?$output:"";  
+		
+		}
+		 
+		public function set_session($date){
+			$ymd = explode("-",$date);
+			if($ymd[1]<10) return ($ymd[0]-1)."/".$ymd[0];
+			else return  $ymd[0]."/".($ymd[0]+1);
+			}
+			
+		public function get_degree_prog($programme)	{
+			$seperator = array('B.','B.Sc.','Pg.D.','B.A.','M.A.','Ph.D.','M.Phil.','B.Sc.(Ed.)','B.A.(Ed.)','M.Sc.','B.(Ed.)', 'M.Phil.','M.Sc.(Ed).','M.(Ed.)','B.Eng.','LL.B.','M.Eng.');
+			$programme = trim($programme);
+			  $bb = array(); 
+			  $result = ""; 
+			 foreach($seperator as $cutter){
+				$values = explode($cutter,$programme); 
+				 
+					 $result .= $cutter." = ". count($values)."<br/>";
+					if(count($values)==2) { 
+						 $bb = array($cutter,trim($values[1]));
+					break;
+					}
+					
+				}
+				
+				$dbm = new DbTool(); 
+			
+			$info = @$dbm->resort($dbm->getFields($dbm->select("programmes",array('name'=>$bb[1])),
+				array('prog_id','fact_id','dept_id')));
+			
+			  return json_encode(array($programme));
+				// return $info; 
+		}
+		
+		/*****
+		################################################
+		public function get_staff_info($id)	{
+			$fields = array('user_id','name','fact_id','dept_id','email','phone','createdby','datecreated','timecreated');
+			$dbm = new DbTool(); 
+			if($id!="" || !empty($id)){
+				$info = @$dbm->resort($dbm->getFields($dbm->select("staff",array('user_id'=>$id)),
+				$fields));
+			
+			  return $info;
+				// return $info; 
+			}
+			else return null;
+			
+		}   ***/
+		
+		/**********************************/ 
+			public function get_staff_info($user_id)
+				{
+					$dbm = new DbTool();
+					$info = $dbm->getFields($dbm->select("users",array('user_id'=>$user_id,'acct_status'=>'active')),array('sn','surname','firstname','midname','fullname','user_id')); 	
+					return is_null($info)?null:$dbm->resort($info);
+				}
+			
+			/**********************************/
+		##########################################################
+			
+	function num_to_word($num){
+		
+		if(($num < 0)|| $num>999999999999999){
+			throw new Exception(" data out of range");	
+		}
+		#
+		if(!is_numeric($num)){
+			throw new Exception(" enter correct number ");	
+		}
+		#
+		$tn = floor($num/pow(10,12)); // trillion
+		$num-=$tn*(pow(10,12));
+		#
+		$bn = floor($num/pow(10,9)); // billion
+		$num-=$bn*(pow(10,9));
+		#
+		$gn = floor($num/pow(10,6)); // million
+		$num-=$gn*(pow(10,6));
+		#
+		$kn = floor($num/pow(10,3)); // thousand
+		$num-=$kn*(pow(10,3));
+		#
+		$hn = floor($num/pow(10,2)); // hundred
+		$num-=$hn*(pow(10,2));
+		#		
+		$dn = floor($num/pow(10,1));
+		$num-=$dn*(pow(10,1));
+		#
+		$n = $num%10;
+		$res = "";
+		#
+		# start work
+		if($tn){$res.=$this->num_to_word($tn)." trillion  "; }
+		if($bn){$res.=$this->num_to_word($bn)." billion  "; }
+		if($gn){$res.=$this->num_to_word($gn)." million  "; }
+		if($kn){$res.=(empty($res)?'':'').$this->num_to_word($kn)." thousand  ";}
+		if($hn){$res.=(empty($res)?'':'').$this->num_to_word($hn)." hundred  ";}
+		#
+		$ones = array('','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen');
+		$tens = array('','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety');
+		#
+		if($dn || $n){
+			if(!empty($res)){
+				$res.=' and ';
+			}
+			if($dn<2){
+				$res.=$ones[$dn*10+$n];	
+			}
+			else{
+				$res.=$tens[$dn-1];
+				
+				if($n){ $res.='-'.$ones[$n];
+					}
+				}
+			
+			}
+		if(empty($res)){
+				$res = 'zero';
+		}
+		
+		return $res;
+		}
+	
+	///////////////
+	//////////////////////////////////////////////////////////////////////
+	//PARA: Date Should In YYYY-MM-DD Format
+	//RESULT FORMAT:
+	// '%y Year %m Month %d Day %h Hours %i Minute %s Seconds'        =>  1 Year 3 Month 14 Day 11 Hours 49 Minute 36 Seconds
+	// '%y Year %m Month %d Day'                                    =>  1 Year 3 Month 14 Days
+	// '%m Month %d Day'                                            =>  3 Month 14 Day
+	// '%d Day %h Hours'                                            =>  14 Day 11 Hours
+	// '%d Day'                                                        =>  14 Days
+	// '%h Hours %i Minute %s Seconds'                                =>  11 Hours 49 Minute 36 Seconds
+	// '%i Minute %s Seconds'                                        =>  49 Minute 36 Seconds
+	// '%h Hours                                                    =>  11 Hours
+	// '%a Days                                                        =>  468 Days
+	//////////////////////////////////////////////////////////////////////
+	function years_old($date_1 , $date_2 , $differenceFormat =' %y Year, %m Months, %d Days' )
+	{
+		$datetime1 = date_create($date_1);
+		$datetime2 = date_create($date_2);
+		
+		$interval = date_diff($datetime1, $datetime2);
+		
+		return $interval->format($differenceFormat);
+		
+	}
+		##########################################################
+	//////////////////////////////////////////////////////////////////////
+	function stock_expiry($mfc , $exp , $size='')
+	{
+		 $from = strtotime($mfc); 
+		 $to = strtotime($exp);
+		 $now = time(); 
+		 $div = 60 * 60 * 24;
+		 $diff = $to - $from; 
+		 $all_days = $diff / $div;
+		 $left = floor(($to - $now)  /  $div); ; 
+		 $color = ""; $expired = "";
+		 switch ($left){
+			 case ($left <=0) : { $color = "text-danger"; $expired = "Expired in ".abs($left)."";  } break; 
+			 case ($left <=15) : { $color = "text-warning"; $expired = "Will Expire in ".abs($left)."";}  break; 
+			 
+			 default : { $color =  "text-info"; $expired = " Still good "; } break; 
+		 }
+		  
+		 return " <span class='$color'>".$left."</span>";  ##  <span class='fa fa-circle $size $color' title=' $expired '>   &nbsp;
+		 
+	}
+		##########################################################
+		
+			
+	} // end class functions 
+	
+	class image_analyzer{
+			
+			// open img info 			
+			public $total_imgs = 0; 
+			public $total_matched_imgs = 0; 
+			public $total_unmatched_imgs = 0; 
+			
+			// hidden img info 
+			private $images = null; 
+			private $pic_names = null; 
+			private $img_dir = "";
+			private $img_type='jpg'; // or 'jpg|png|jpeg|gif'
+			
+			public function __construct($img_dir, $img_type='jpg', $pic_names = null){
+			
+				$this->img_dir = $img_dir;
+				$this->img_type = $img_type; 
+				$this->pic_names = $pic_names;
+				$this->analyze(); 				
+			}
+			
+			private function analyze(){
+				
+				## $imgs = array_diff(scandir($dir,0),array('..','.'));
+				## $images = preg_grep('~\.(jpeg|jpg|png)$~', scandir($dir_f));
+				
+				/*** get all images **/
+				$this->images = preg_grep("~\.(".$this->img_type.")$~", scandir($this->img_dir,0)); // filter only JPG in asc order, scandir($dir,1) is desc order
+				
+				/*** count images found **/
+				$this->total_imgs = count($this->images); 
+				
+				/**** find all matched images ***/				
+				if(!is_null($this->pic_names)) foreach($this->pic_names as $name){
+						$name = $name.".".$this->img_type; 
+						if(in_array($name,$this->images)){
+							$this->total_matched_imgs++;
+						}
+					}
+				$this->total_unmatched_imgs = $this->total_imgs - $this->total_matched_imgs; 
+				
+			}
+
+			###########################################################
+			/**********************************************************/
+			public function alternate_picname($picname){				 
+					$sim = "";	$alt_name = "";					
+					foreach($this->images as $img_name){						
+						 similar_text($img_name,$picname,$sim);						 
+							if($sim >=75){
+								$alt_name = $img_name; 
+								break; 
+							}
+					}
+					
+					$diff = $this->text_diff($picname,$alt_name);  					
+					$diff = array_merge($diff,array('alt'=>$alt_name));
+					
+					return $diff;
+					
+			} // alternate_picname
+
+			###########################################################
+			/**********************************************************/
+		
+			function text_diff($old, $new){
+				$from_start = strspn($old ^ $new, "\0");        
+				$from_end = strspn(strrev($old) ^ strrev($new), "\0");
+
+				$old_end = strlen($old) - $from_end;
+				$new_end = strlen($new) - $from_end;
+
+				$start = substr($new, 0, $from_start);
+				$end = substr($new, $new_end);
+				$new_diff = substr($new, $from_start, $new_end - $from_start);  
+				$old_diff = substr($old, $from_start, $old_end - $from_start);				
+				
+				$a = strlen($start);
+				$b = strlen($new_diff);
+				$c = strlen($old_diff);
+				$d = strlen($end);				
+
+				// now control how text will be shown 
+				/********************************************/				
+				if($b == 0 && $c == 0) { 
+					$new = $old = ""; 
+				}
+				else { 					
+					$new = "$start<span style='background-color:#ccffcc; font-wight:bold;'>$new_diff</span>$end";
+					
+					$old = "$start<span style='background-color:#ffcccc'>$old_diff</span>$end";
+				}
+				return array("old"=>$old, "new"=>$new); 
+		}
+				
+	}  // end class 
+	
+	
+	
+	class zip_images{
+				
+			private $zip, $path, $zip_dir, $zip_name; 
+			private $img_temp_dir = "PASSPORTS/";
+			
+			private $img_source, $img_name, $original_sources; 
+			##############################################
+			public function __construct(array $image_names, array $image_sources, $output_filename, $output_directory)
+			   {
+					$this->img_name = $image_names;									## array
+					$this->img_source = $image_sources;								## array	   
+					 
+					$this->zip = new ZipArchive();									## php function 
+					$this->path = $output_directory . $output_filename . '.zip';	## final filename path	
+					$this->zip_dir = $output_directory; 							## where to write d zip
+					$this->zip_name = $output_filename; 							## filenow to download
+					$this->flush_dir();												## Remove any previous files
+					
+					// START WRITING ZIP FILE
+					$this->zip->open( $this->path, ZipArchive::CREATE);
+
+					/** AUTO-ADD THE FILES TO ZIP **/								## empty any previous file					
+					$this->auto_create_zip(); 
+					 
+				}
+			 ############################################
+			 
+			 private function flush_dir(){
+				 // clear any img dir
+				 if(is_dir($this->img_temp_dir)){
+						$files = glob($this->img_temp_dir."*"); 
+						// delete all files 
+						foreach($files as $file){
+							if(is_file($file)) @unlink($file); 									  
+							}							 
+					}
+					// now create img_dir for writing zip if not exists 
+					if(!is_dir($this->img_temp_dir)) mkdir($this->img_temp_dir);				
+					
+					## CHECK IF THE ZIP FILENAME ALSO EXISTS
+					if(is_file($this->path)) @unlink($this->path);  	// remove previous zip file to AVOID overwrite
+					## ENSURE THE ZIP FILE PATH EXISTS 
+					if(!is_dir($this->zip_dir)) mkdir($this->zip_dir);
+					
+					
+				 }
+				 
+				########################################### 
+				private function auto_create_zip(){
+					
+					/*** PREVENT FILE FROM WRITING BUG ERROR - WHEN FILE SIZE EXITS DEFAULT LIMIT ***/
+					/***/	ini_set('memory_limit',-1);			/*******************************/
+					/***	PREVENT TIME INTERUPT 				***/
+					/***/   set_time_limit(0);					/**/
+					/***************************************************************************/
+					
+					// loop through each images and sources 
+					$sn = 0;  
+					foreach($this->img_source as $old_path){
+						$new_name = $old_path.$this->img_name[$sn].".jpg";	
+						if(file_exists($new_name)) 
+						{
+							// copy from old path to new path : PASSPORTS/filenames.jpg
+							if(@copy($new_name,$this->img_temp_dir.$this->img_name[$sn].".jpg"));  
+							
+							// NOW ADD ALL THE NEW PICTURE PATHS TO THE ZIP FILE
+							$this->zip->addFile($this->img_temp_dir.$this->img_name[$sn].".jpg"); 
+						
+						}
+						
+						$sn++;
+					} 
+					
+					$this->zip->close(); ### the zip file is now created / SAVED
+					
+				}
+		
+		##	Auto Download the file
+
+		##	To start the zip file auto-downloading we get the zip path from the zip class, set the page headers and 		then use
+		##	'readfile' to output the contents of the zip.
+	
+		public function download(){
+			
+			$zip_path = $this->path; 
+			header( "Pragma: public" );
+			header( "Expires: 0" );
+			header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+			header( "Cache-Control: public" );
+			header( "Content-Description: File Transfer" );
+			header( "Content-type: application/zip" );
+			header( "Content-Disposition: attachment; filename=\"" . $this->zip_name . ".zip\"" );
+			header( "Content-Transfer-Encoding: binary" );
+			header( "Content-Length: " . filesize($zip_path ));
+			ob_clean();
+			flush();			
+			readfile($zip_path);
+			exit; 
+
+		}
+		######################################################
+		
+		
+		/* creates a compressed zip file */
+		private function create_zip($files = array(),$destination = '',$overwrite = false) {
+			//if the zip file already exists and overwrite is false, return false
+			if(file_exists($destination) && !$overwrite) { return false; }
+			//vars
+			$valid_files = array();
+			//if files were passed in...
+			if(is_array($files)) {
+				//cycle through each file
+				foreach($files as $file) {
+					//make sure the file exists
+					if(file_exists($file)) {
+						$valid_files[] = $file;
+					}
+				}
+			}
+			//if we have good files...
+			if(count($valid_files)) {
+				//create the archive
+				$zip = new ZipArchive();
+				if($zip->open($destination,$overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+					return false;
+				}
+				//add the files
+				foreach($valid_files as $file) {
+					$zip->addFile($file,$file);
+				}
+				//debug
+				//echo 'The zip archive contains ',$zip->numFiles,' files with a status of ',$zip->status;
+						
+				//close the zip -- done!
+				$zip->close();
+				
+				//check to make sure the file exists
+				return file_exists($destination);
+					}
+					else
+					{
+						return false;
+					}
+				}
+				
+					} 	##### END CLASS ZIP 
+			## Sample Usage
+			
+			$files_to_zip = array(
+				'preload-images/1.jpg',
+				'preload-images/2.jpg',
+				'preload-images/5.jpg',
+				'kwicks/ringo.gif',
+				'rod.jpg',
+				'reddit.gif'
+			);	
+			
+			//if true, good; if false, zip creation failed
+			// $result = create_zip($files_to_zip,'my-archive.zip');
+		   
+	//	}
+	
+	
+	?>

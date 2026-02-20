@@ -1,0 +1,125 @@
+			
+		<?php 
+			/*********
+			**** SOURCE FOR LIST OF PRODUCT BRANDS  
+			**** department ***********/
+			// $departments = $dbm->getFields($dbm->select('departments',array('status'=>'active')),array('name','sn'));
+                        
+                        $departments = $dbm->getFields($dbm->select('departments',array('status'=>'active')),array('name','sn','status'));
+				$n = 0; 
+				if(!is_null($departments )) { 
+					foreach($departments['name'] as $brand){ 
+		?>
+		<div class="col-md-12 grid-margin stretch-card">
+			<div class="card">
+                  <div class="card-body accordion-primary">
+                    <h4 class="card-title"> <strong> <?php echo $brand; ?> department &nbsp; <i class="fa fa-building-o"> </i> </strong> &nbsp; &nbsp; <small class="pull-right pointer" onclick="manage_brand($(this).attr('data-text'))" data-toggle="modal" data-target="#new_brand_product_modal" data-text="<?php echo $brand."|".$departments['sn'][$n]; ?>"> edit  <?php echo $brand; ?>  <span class="pointer fa fa-pencil font-20 text-warning"> </span> </small></h4>                   
+                    <div class="accordion accordion-multiple-outline " id="<?php echo "accordion-$n"; ?>" role="tablist"> 
+                   <!--  <div class="accordion basic-accordion " id="<?php echo "accordion-$n"; ?>" role="tablist">-->
+                     <?php 
+						/*****
+						***** LOAD EACH CATEGORIES OF ITEM BRAND 
+						*****/
+						## $dept_categs = $dbm->getFields($dbm->select('bill_category',array('dept_id'=>$departments['sn'][$n],'status'=>'active')),array('name','dept_id','sn'));
+						   $dept_categs = $dbm->getFields($dbm->select('bill_category',array('dept_id'=>$departments['sn'][$n])),array('name','dept_id','sn','status'));
+						$m = 0; 
+						if(!is_null($dept_categs )) {
+							foreach($dept_categs['name'] as $categ){  ?> 
+						<div class="card">
+                  <div class="card-header bold" role="tab" id="<?php echo "heading-$m-$n"; ?>">
+                    <h5 class="mb-0">
+                      <a data-toggle="collapse" href="<?php echo "#collapse-$m-$n"; ?>" aria-expanded="false" aria-controls="<?php echo "collapse-$m-$n"; ?>">   <?php echo "<b>".$categ."</b>"; ?>  </a>
+                    </h5>
+                  </div>
+                  <div id="<?php echo "collapse-$m-$n"; ?>" class="collapse" role="tabpanel" aria-labelledby="<?php echo "heading-$m-$n"; ?>" data-parent="<?php echo "#accordion-$n"; ?>">
+                    <div class="card-body">
+                      <div class="row"> 
+                        <div class="col-md-12">
+                       <table class="table table-nogap table-hover table-bordered border-primary"><tbody>
+
+								<?php  
+								## $dept_categs_types = $dbm->getFields($dbm->select('bill_types',array('dept_id'=>$departments['sn'][$n],'categ_id'=>$dept_categs['sn'][$m],'status'=>'active')),array('name','sn','price','specimen_sample','estm_time','estm_time_type'));
+								  $dept_categs_types = $dbm->getFields($dbm->select('bill_types',array('dept_id'=>$departments['sn'][$n],'categ_id'=>$dept_categs['sn'][$m])),array('name','sn','price','specimen_sample','estm_time','estm_time_type','status'));
+									$p = 0; if(!is_null($dept_categs_types)){ ?>
+								<tr class="bold table-primary bordered">
+									<td class="serial text-center"> SN </td>
+									<td> Name </td>
+									<td> Sample Required</td>
+									<td> Price </td>
+									<td> Estim. Time </td>
+									<td> Edit </td>
+									<td> Status <br/><small>Active / Not Active</small></td>
+									<td> Result Temp.</td>
+								</tr>
+												
+								<?php $days = array(0,60,3600,86400,604800,2419200); ## sec, min, hour, day, week, month				
+									 foreach($dept_categs_types['name'] as $type_name){   
+										## old - $template_setup = $dbm->getFields($dbm->select('specimen_result_template',array('bill_type_id'=>$dept_categs_types['sn'][$p],'status'=>'active')),array('sn','name','has_unit','unit','has_ref_val','ref_val','age_range')); 
+										## old - $tot_tests = $mydbm->runBaseQuery("select count(*) as total from customer_specimen where bill_type_id='".$dept_categs_types['sn'][$p]."' and status='active' and process_completed='yes' and finalized='yes'"); 
+										
+										$template_setup = $dbm->getFields($dbm->select('specimen_result_template',array('bill_type_id'=>$dept_categs_types['sn'][$p])),array('sn','name','has_unit','unit','has_ref_val','ref_val','age_range')); 
+										# $tot_tests = $mydbm->runBaseQuery("select count(*) as total from customer_specimen where bill_type_id='".$dept_categs_types['sn'][$p]."' and process_completed='yes' and finalized='yes'"); 
+									 ?>
+									 <!-- <li> <?php echo $type_name; ?> &nbsp;  <span onclick="manage_brand_categ_type($(this).attr('data-text'))" data-text="<?php echo $type_name."|".$departments['sn'][$n]."|".$dept_categs['sn'][$m]."|".$dept_categs_types['sn'][$p]; ?>" data-toggle="modal" data-target="#brand_categ_type_modal" class="pull-right pointer small text-primary"> update <i class="fa fa-pencil"></i> </span></li> -->
+									<tr class="font-20"> 
+										<td class="serial text-center"> <span class="badge badge-primary"><?php echo ($p+1); ?></span> &nbsp;  </td>
+										<td> <?php echo $type_name; ?> &nbsp; <span class="small text-italics pull-right"><strong><?php # print "  Total Test(s) : ". $tot_tests[0]['total'];?></strong> </span></td>
+										<td> <small> <?php echo $dept_categs_types['specimen_sample'][$p]; ?> </small>  </td>
+										<td> <b>  &#8358; <?php echo number_format($dept_categs_types['price'][$p]);?> </b> </td>
+										<td> &nbsp;    <?php  $val = $dept_categs_types['estm_time'][$p] * $days[$dept_categs_types['estm_time_type'][$p]]; /** echo $val; **/ ##echo strtoupper(readTime($val));?> &nbsp;  </td>
+										<td>  <a  data-toggle="modal" data-target="#billTypeForm" data-backdrop="static" data-keyboard="false"
+												onclick="manage_billtype_update($(this).attr('data-text'))"
+												 data-text="<?php echo $departments['sn'][$n]."|".$dept_categs['sn'][$m].'|'.$dept_categs_types['sn'][$p].'|'.$type_name.'|'.$dept_categs_types['specimen_sample'][$p].'|'.$dept_categs_types['price'][$p].'|'.$dept_categs_types['estm_time'][$p].'|'.$dept_categs_types['estm_time_type'][$p]; ?>"
+												 class="unvisible btn  btn-md">
+												<i class="fa fa-pencil text-warning"></i>
+                        </a>  
+										</td>
+										<td> <?php if($dept_categs_types['status'][$p]=="active"){ ?> 
+                          <a  href="javascript:void(0)" id="bill_id_<?php echo $dept_categs_types['sn'][$p];?>" bill_id="<?php echo $dept_categs_types['sn'][$p];?>"  
+                              class="del-bill-type update_bill_status" >
+												<i class="mdi mdi-bookmark-check mdi-36px text-success" status="active">  </i>
+											</a>  
+                        <?php } else { ?> 
+                             <a href="javascript:void(0)" id="bill_id_<?php echo $dept_categs_types['sn'][$p];?>" bill_id="<?php echo $dept_categs_types['sn'][$p];?>" 
+                                class="update_bill_status" >
+												<i class="mdi mdi-bookmark-remov				e mdi-36px text-danger"  status="inactive">  </i>
+											</a> 
+                            <?php } ?>   
+                            </td>
+										<td> &nbsp;&nbsp; <span  for="<?php echo $dept_categs_types['sn'][$p]; ?>" onclick="view_bill_result_template($(this).attr('for'),$('#result_template'))" data-toggle="modal" data-target="#spec_template_view" class="pointer mdi mdi-book-open-page-variant  mdi-24px <?php echo (is_null($template_setup))?'text-warning':'text-primary'; ?>"> </span> </td>
+										
+									</tr>
+									<?php $p++; } # end foreach
+								} #end not null 
+								else {
+									echo "<div class='alert alert-warning'> <span class='text-danger'> No Available Bill Type  for $categ; </span> </div>";
+								} 
+							?>
+								 </tbody> </table>
+                              </div> 
+                            </div> <!-- ./ row -->
+                          </div>  <!-- ./ card-body -->
+						   <!-- new sub item category -->
+							 <!-- <button  type="button" class="btn btn-outline-info btn-rounded  btn-sm"> <i class="fa fa-plus"> </i> &nbsp; Add More  <?php echo $categ; ?>  Type </button> -->
+							&nbsp;&nbsp;  <small class="pull-right pointer label label-primary" data-toggle="modal" data-target="#billCategForm" data-backdrop="static" data-keyboard="false" 
+									onclick="show_update_buttons(), manage_form_update($(this).attr('data-text'),$(this).attr('for'),$('#updateBillCateg'))" data-text="<?php echo $categ.'|'.$dept_categs['sn'][$m]."|".$departments['sn'][$n]; ?>"
+										 for="<?php echo $dept_categs['sn'][$m];?>"> [edit categ]  <?php echo $categ; ?>  <span class="pointer fa fa-pencil font-20 text-warning"> </span> </small> 
+                        </div> <!-- ./ collapse -->
+                      </div>  <!-- ./ card -->
+					  
+					  <?php 
+							$m++; } ## end foreach categ
+						} ## end categ not null 
+					  ?> 
+					  <!-- new set of brand in the accordion -->
+					 <!--  <button onclick="create_new_brand_categ($(this).attr('data-text'))" data-toggle="modal" data-target="#brand_categ_modal" type="button" data-text="<?php echo $categ."|".$departments['sn'][$n]; ?>" class="btn btn-outline-success btn-rounded btn-block "> <i class="fa fa-plus"> </i> &nbsp; Add New <?php echo $brand; ?> Bill Category </button> --> 
+					  
+                    </div> <!-- ./ accordion -->
+                  </div> <!-- ./ main-card-body -->
+                </div> <!-- ./ main-card -->
+			</div> <!-- ./ col-md-6 -->
+				 
+		<?php 
+			$n++; 
+			} ## end foreach brands 
+		} ## end not null for brands  ?>

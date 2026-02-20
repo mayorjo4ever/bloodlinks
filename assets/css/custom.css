@@ -1,0 +1,353 @@
+/* CSS Document */
+	table.table-nogap { border:10px thin #00bcd4; } 
+	table.table-nogap tr td,table.table-nogap tr { margin-top:0.0em; margin-bottom:0.0em; padding-top:0.0em; padding-bottom:0.0em; text-align:left; }
+	table.table-nogap td div.form-group{ margin-top:0em; margin-bottom:0em; padding-top:0em; padding-bottom:0em;} 
+	
+	table.table-nogap td{ padding-left:0.4em; padding-right:0.4em; min-width:16%;   } 
+	table.table-nogap td.serial{ min-width:5%; } 
+	table.table-nogap td.titles{ min-width:8%; } 
+	table.cosmo td{ font-size:20px;  } 
+	table.line-35 td{ line-height:35px; } 
+	table.line-20  tbody td{ line-height:10px; } 
+	
+	table.table-nogap select {
+		height:26px;
+		padding-top:0px;
+		margin-top:0px;
+	}
+	
+	.show_opacity .low_opacity{ opacity:0.1; }
+	.show_opacity:hover .low_opacity{ opacity:1; }
+	
+table.jambo_table {
+				border: 1px solid rgba(221, 221, 221, 0.78);
+			}
+
+			table.jambo_table thead {
+				background: rgba(52, 73, 94, 0.94);
+				color: #ECF0F1;
+			}
+
+			table.jambo_table tbody tr:hover td {
+				background: rgba(38, 185, 154, 0.07);
+				border-top: 1px solid rgba(38, 185, 154, 0.11);
+				border-bottom: 1px solid rgba(38, 185, 154, 0.11);
+			}
+
+			table.jambo_table tbody tr.selected {
+				background: rgba(38, 185, 154, 0.16);
+			}
+
+			table.jambo_table tbody tr.selected td {
+				border-top: 1px solid rgba(38, 185, 154, 0.40);
+				border-bottom: 1px solid rgba(38, 185, 154, 0.40);
+			}
+			
+			.bold{font-weight:bolder;}
+			.font-5{font-size:5px;}
+			.font-6{font-size:6px;}
+			.font-7{font-size:7px;}
+			.font-8{font-size:8px;}
+			.font-9{font-size:9px;}
+			.font-10{font-size:10px;}
+			.font-11{font-size:11px;}
+			.font-12{font-size:12px;}
+			.font-13{font-size:13px;}
+			.font-14{font-size:14px;}
+			.font-15{font-size:15px;}
+			.font-16{font-size:16px;}
+			.font-17{font-size:17px;}
+			.font-18{font-size:18px;}
+			.font-19{font-size:19px;}
+			.font-20{font-size:20px;}
+			.font-21{font-size:21px;}
+			.font-22{font-size:22px;}
+			.font-23{font-size:23px;}
+			.font-24{font-size:24px;}
+			.font-25{font-size:25px;}
+			.font-26{font-size:26px;}
+			.font-27{font-size:27px;}
+			.font-28{font-size:28px;}
+			.font-29{font-size:29px;}
+			.font-30{font-size:30px;}
+			.font-31{font-size:32px;}
+			.font-32{font-size:32px;}
+			.font-33{font-size:33px;}
+			
+			.white {color:#FFF;}
+			.black{color:#000;}
+			.green{color:green;}
+			.red{color:red;}
+			.blue{color:blue;}
+			.text-capitalize{text-transform:capitalize;}
+			.text-italic{ font-style:italic;}
+			.text-uppercase{text-transform:uppercase;}
+			.text-lowercase{text-transform:lowercase;}
+			.text-underline{text-decoration:underline;}
+			
+			
+			
+	/* Progress Bar */
+		.progress {
+		  position: relative;
+		  height: 4px;
+		  display: block;
+		  width: 100%;
+		  background-color: #acece6;
+		  border-radius: 2px;
+		  background-clip: padding-box;
+		  margin: 0.5rem 0 1rem 0;
+		  overflow: hidden; }
+		  .progress .determinate {
+			position: absolute;
+			background-color: inherit;
+			top: 0;
+			bottom: 0;
+			background-color: #26a69a;
+			transition: width .3s linear; }
+		  .progress .indeterminate {
+			background-color: #26a69a; }
+			.progress .indeterminate:before {
+			  content: '';
+			  position: absolute;
+			  background-color: inherit;
+			  top: 0;
+			  left: 0;
+			  bottom: 0;
+			  will-change: left, right;
+			  -webkit-animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+					  animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite; }
+			.progress .indeterminate:after {
+			  content: '';
+			  position: absolute;
+			  background-color: inherit;
+			  top: 0;
+			  left: 0;
+			  bottom: 0;
+			  will-change: left, right;
+			  -webkit-animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+					  animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+			  -webkit-animation-delay: 1.15s;
+					  animation-delay: 1.15s; }
+
+		@-webkit-keyframes indeterminate {
+		  0% {
+			left: -35%;
+			right: 100%; }
+		  60% {
+			left: 100%;
+			right: -90%; }
+		  100% {
+			left: 100%;
+			right: -90%; } }
+		@keyframes indeterminate {
+		  0% {
+			left: -35%;
+			right: 100%; }
+		  60% {
+			left: 100%;
+			right: -90%; }
+		  100% {
+			left: 100%;
+			right: -90%; } }
+		@-webkit-keyframes indeterminate-short {
+		  0% {
+			left: -200%;
+			right: 100%; }
+		  60% {
+			left: 107%;
+			right: -8%; }
+		  100% {
+			left: 107%;
+			right: -8%; } }
+		@keyframes indeterminate-short {
+		  0% {
+			left: -200%;
+			right: 100%; }
+		  60% {
+			left: 107%;
+			right: -8%; }
+		  100% {
+			left: 107%;
+			right: -8%; } }
+		/** end linear progress-bar **/
+		
+		ul.num_list li:hover{
+			background-color: #afd9ee; 
+			cursor:pointer;
+		}
+		ul.num_list li{
+			padding: 5px;
+			font-size:16px;
+			list-style:numeric; 
+			}
+
+	.border-1{
+		border:1px solid #eee;
+	}
+	input:checkbok.border-1{
+		border:2.5px solid #000;
+	}
+	.border-left-dot {
+		border-left:3px dotted #000;
+		border-right:0px;
+		border-top:0px;
+		border-bottom:0px;
+		
+	}
+	.all-bordered {
+		width:100%; 		
+		border-bottom:3px dotted #000;
+	}
+	.fieldset-dotted {
+		border:3px dotted #000; margin:5px 20px; padding:5px 20px; 
+	}
+	
+	.mgl-15 {
+		margin-left:15px; padding-left:15px; 
+	}
+	
+	@media print{
+		.no-print{
+			display:none !important; 
+			visibility:hidden !important;
+		}
+	}
+	.pointer{
+		cursor:pointer;
+	}
+	a.unstyle {
+		text-decoration:none; 
+	}
+	
+	/** toggle checkbox ***/
+	.toggle.rounded,.toggle-on.rounded, .toggle-off.rounded{ /**  border-radius: 0px; ***/}
+	.toggle.rounded .toggle-handle { /**  border-radius: 0px; ***/ }
+	 
+	
+.visible {
+	visibility: visible !important;
+	display:block !important; 
+  }
+
+.invisible {
+  visibility: hidden !important;
+	display:none !important; 
+  }
+
+
+.mytable {
+  width: 100%;
+ margin-left:0%; padding-left:0%; 
+
+  max-width: 100%;
+  margin-bottom: 20px; 
+
+}
+	
+.mytable2 {
+  width: 90%;
+ margin-left:5%; padding-left:5%; 
+  max-width: 90%;
+  margin-bottom: 20px; 
+   
+}
+.mytable2 > thead > tr > th,
+.mytable2 > tbody > tr > th,
+.mytable2 > tfoot > tr > th,
+.mytable2 > thead > tr > td,
+.mytable2 > tbody > tr > td,
+.mytable2 > tfoot > tr > td {
+  padding: 5px;
+  line-height: 1.42857143;
+  vertical-align: top; 
+ /* border-top: 1px solid #ddd; */
+} 
+
+
+
+.mytable > thead > tr > th,
+.mytable > tbody > tr > th,
+.mytable > tfoot > tr > th,
+.mytable > thead > tr > td,
+.mytable > tbody > tr > td,
+.mytable > tfoot > tr > td {
+  padding: 5px 3px;
+  line-height:30px; 
+  vertical-align: top; 
+  font-size:16px;  border:none; 
+ 
+}  
+
+/*******  SWITCH BUTTON STYLE SHEET *********/
+			
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 53px; /** 60px **/
+  height: 31px; /** 34px **/
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;  /** 26px **/
+  width: 20px; 		/** 26px **/
+  left: 4px;
+  bottom: 6px;
+  background-color: white;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color:  #19d895;   /** #2196F3; a9f0d7 **/
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);		/** 26px **/
+  -ms-transform: translateX(26px);			/** 26px **/
+  transform: translateX(26px);				/** 26px **/
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;			/** 34px **/
+}
+
+.slider.round:before {
+  border-radius: 80%;		/** 50% **/
+}
+
+.align-right { text-align:pull-right; }
+
+
+/**  								
+	<label class="switch">  
+	  <input type="checkbox" checked onchange="console.log('Toggle: ' + $(this).prop('checked'))">
+	  <span class="slider round"></span>
+	</label> &nbsp; <span class="bold"> Has Unit </span>
+**/	
+/*******  SWITCH BUTTON STYLE SHEET *********/

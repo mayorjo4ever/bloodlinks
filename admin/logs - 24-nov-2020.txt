@@ -1,0 +1,4 @@
+logs
+1- update table 'hospital_invoice' fields : discount, amount_paid, balance to double
+2- update table 'hospital_invoice' fields : _change added
+2- create new page - unpaid invoice update  - and assign to users

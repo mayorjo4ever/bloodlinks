@@ -1,0 +1,38 @@
+<?php 
+	if(!isset($_SESSION)) session_start(); 
+	error_reporting(E_ALL^E_NOTICE); 
+	require_once "../config/config.php";
+	require_once "../assets/php/dbTool.php"; 
+	require_once "../assets/php/DBController.php";
+	require_once "../assets/php/pdo_dal.php";
+	require_once "../assets/php/User_1.php";
+	require_once "../assets/php/timecoder.php"; 	
+	 
+	$dbm = new DbTool(); 
+	$mydbm = new DBController(); 
+	$mydal = new DAL(); 
+	
+	$admin = new User("users");	
+	  
+	/*************************************************************************/	
+	 $admin->dbCheckUser('admUser','admKey');  ### double check user	
+	 $_SESSION['adminInfo'] = $adminInfo = $dbm->resort($admin->getAll(array("user_id"=>$_SESSION['admUser'])));
+	 $_SESSION['adminFullname'] = $_SESSION['adminInfo']['surname']." ".$_SESSION['adminInfo']['firstname']." ".$_SESSION['adminInfo']['midname'];
+	 $text = $_SESSION['adminInfo']['date_c'];
+	 $date = new DateTime($text);
+	 $_SESSION['member_since'] = $date->format('jS M, Y' );
+	
+	
+	require "../assets/php/pages.php";	
+	#require_once "../assets/php/model.php";
+	
+	$func = new functions(); 	
+	
+	
+	##  renew active time of user and keep track of current page user is..
+	 $_SESSION['logTimeOut'] = (time()+ (30*60));
+	 
+	set_time_limit(0); 
+	  
+
+?>

@@ -1,0 +1,284 @@
+
+	
+	// jquery 
+	$(function(){
+		/******************* class=""****************/
+			 $('#ticket_no').on('submit',function(){ $('#search_ticket').click(); } )
+			 elem = $('.search_output'); loader = "<span class='fa fa-spinner fa-spin fa-3x'> </span>";
+			/**** WHEN SUBMITTING FORMS ******/
+			
+			
+			$('#ticket_no').on('keyup',function(){
+				search_text = $(this).val();  elem = $('.search_result'); 
+				/*********************/
+				var l = Ladda.create( document.querySelector('#search_ticket'));			
+				/**********************/
+				displayer = $('.num_list');  
+				if(search_text.length >=1) {  $.ajax({							
+						url: 'formsubmit.php',
+						type: 'POST',
+						data: {auto_search_ticket_for_payment:"",keyword:search_text},
+						beforeSend:function(){l.start(); /**  $('.search_result').html(''); **/},
+						success:function(data){
+							displayer.show();
+							displayer.html(data);
+							l.stop();
+							}
+					}); 
+					}
+					else {
+					displayer.hide(); 						
+				}
+			});  
+			/*****************/
+			
+			
+			
+			$('#search_ticket').on('click',function(e){  
+				ticket_no = $('#ticket_no'); value = ticket_no.val();   
+				elem = $("div.search_result");
+				 if(value=="" || value.length<=10 ){ // hrm/20/0000 
+					ticket_no.removeClass('border-success').addClass('border-danger'); 
+					showToastPosition('bottom-center','Invalid Ticket Number','Ticket Number Must be 11 digits','error'); 
+				 } // end if 
+				 else{
+					ticket_no.removeClass('border-danger').addClass('border-success');  
+					 /*********************/
+					 var l = Ladda.create(this);  
+					/*********************/
+						 var req = $.ajax({url : "formsubmit.php", method : "POST",
+							data : { search_ticket_payment:"new", ticket_no:value 
+							}, beforeSend:  function(){  l.start();  elem.html(loader); }	 }); 
+						
+						req.fail(function(e){ console.log(e.status);  l.stop();  });
+						req.done(function(res){  l.stop(); elem.html(res);  
+							// alert(res);
+						});
+				 }
+				 
+				 return false; 
+			}); 
+			/*****************************************************************/
+			
+		/*********************************************/	 
+		 $('.viewtickes').on('click',function(){	 
+			 datefrom  = $('#datefrom'); 
+			 dateto  = $('#dateto'); 
+			 elem = $('.dateresults'); 
+			 process_status = "yes";
+			 if(datefrom.val()==""){ datefrom.focus(); }
+			 else if(dateto.val()==""){ dateto.focus(); }
+			 else {
+				 var req = $.ajax({
+					url:"formsubmit.php", data:{ view_ticket_dates:'all',process_status:process_status, datefrom:datefrom.val(), dateto:dateto.val()}, method:"POST",beforeSend:function(){ elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>");} }); 
+					req.fail(function(e){ console.log(" --- "+ e.status+" Failed"); elem.html(''); });
+					req.done(function(res){ elem.html(res);  /** alert(res); **/ }); 				 
+				} 
+		 });
+		
+			 /*****************************************************************/
+				
+		/*********************************************/	 
+		 $('.view_histories').on('click',function(){	 
+			 datefrom  = $('#datefrom'); 
+			 dateto  = $('#dateto'); 
+			 elem = $('.dateresults'); 
+			 
+			 if(datefrom.val()==""){ datefrom.focus(); }
+			 else if(dateto.val()==""){ dateto.focus(); }
+			 else {
+				 var req = $.ajax({
+					url:"formsubmit.php", data:{ view_ticket_paym_dates:'all', datefrom:datefrom.val(), dateto:dateto.val()}, method:"POST",beforeSend:function(){ elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>");} }); 
+					req.fail(function(e){ console.log(" --- "+ e.status+" Failed"); elem.html(''); });
+					req.done(function(res){ elem.html(res);  /** alert(res); **/ }); 				 
+				} 
+		 });
+		
+			 /*****************************************************************/
+		/*********************************************/	 
+		 $('.view_ticket_paym_summary').on('click',function(){	 
+			 datefrom  = $('#datefrom2'); 
+			 dateto  = $('#dateto2'); 
+			 viewtype =   $('input:radio.search_type:checked').val(); 
+			 elem = $('.dateresults2'); 
+			 
+			 if(datefrom.val()==""){ datefrom.focus(); }
+			 else if(dateto.val()==""){ dateto.focus(); }
+			 else {
+				 var req = $.ajax({
+					url:"formsubmit.php", data:{ view_ticket_paym_summary:'all', datefrom:datefrom.val(), dateto:dateto.val()}, method:"POST",
+					beforeSend:function(){ alert(viewtype); elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>");} }); 
+					req.fail(function(e){ console.log(" --- "+ e.status+" Failed"); elem.html(''); });
+					req.done(function(res){ elem.html(res);  /** alert(res); **/ }); 				 
+				} 
+			});
+		
+			 /*****************************************************************/
+			
+			 	
+			
+			 
+			 
+	}); // jQuery
+	
+	 function set_ticket_found(name,id) {
+		// change input value
+		$('#ticket_no').val(name);
+		$('#ticket_no').attr('ref',id);	 				
+		$('.num_list').hide(); 
+		/*********************/
+		$('#search_ticket').click(); 		
+	}
+	///////////////////////
+	
+	function calc_remains(elem){  
+		var value = (elem.val()); value = value.replaceAll(",","");
+		value = parseInt(value);
+		if(!parseInt(value)) {  value = 0; }
+		max_pay = parseInt(elem.attr('tot_fee')); 
+		init_pay = parseInt(elem.attr('init_pay')); 
+		remains = max_pay - init_pay - value; 
+		$('span.balance').html("&#8358; "+numberSeperator(remains)); 
+		elem.val(numberSeperator(value));
+		//$('#amount_payable').val(remains); 
+		// console.log('value : '+value +' remains : '+remains); 
+	}
+	
+	function reverse_payment(){ //	
+		ticket_no =  $('button.reverse_payment').attr('for'); // coded	
+		/********/
+				swal({icon:'warning',title: ' Reverse  '+ ' Payment ?', closeOnEsc:false,closeOnClickOutside:false,				 
+				buttons: {
+				  cancel: {
+					text: "Cancel",value: null,visible: true,
+					closeModal: true,
+				  },
+				  confirm: {
+					text: "Yes, Reverse!", value: true,visible: true,
+					closeModal: false
+				  }
+				},
+				text:"About Reversing this payment ",dangerMode:true})
+				.then((value) => {
+				  if(value) {
+					/** when confirmed.. send to server **/
+					/**********************************************/
+					var req = $.ajax({url : "formsubmit.php",method : "POST", 
+								data:{ reverse_payment:"this",ticket_no:ticket_no }  	
+							});
+						
+					req.fail(function(e){  
+						console.log(e.status+" Failed"); 
+					 });
+					
+					req.done(function(res){ // alert(res);
+						  var output = $.parseJSON(res);
+						  
+							 swal({title:output['title'],text:output['text'],icon:output['icon']})
+							 .then((next)=>{
+								 if(output['icon']=="success"){
+									// manage_receipt_view(data_text);
+									$('#search_ticket').click(); 
+								 }
+							 });	
+					 }); 
+				}  // if value 
+				});  // then
+	} // end function 
+	
+	
+	function finalize_payment(){ //	
+		ticket_no =  $('button.finalize_payment').attr('for'); // coded	
+		/********/
+				swal({icon:'warning',title: ' Finalize This  Payment ?', closeOnEsc:false,closeOnClickOutside:false,				 
+				buttons: {
+				  cancel: {
+					text: "Cancel",value: null,visible: true,
+					closeModal: true,
+				  },
+				  confirm: {
+					text: "Yes, Finalize!", value: true,visible: true,
+					closeModal: false
+				  }
+				},
+				text:" After finalizing, Reverse and Further Payment will no more be allowed  ",dangerMode:false})
+				.then((value) => {
+				  if(value) {
+					/** when confirmed.. send to server **/
+					/**********************************************/
+					var req = $.ajax({url : "formsubmit.php",method : "POST", 
+								data:{ finalize_payment:"this",ticket_no:ticket_no }  	
+							});
+						
+					req.fail(function(e){  
+						console.log(e.status+" Failed"); 
+					 });
+					
+					req.done(function(res){ // alert(res);
+						  var output = $.parseJSON(res);
+						  
+							 swal({title:output['title'],text:output['text'],icon:output['icon']})
+							 .then((next)=>{
+								 if(output['icon']=="success"){
+									// manage_receipt_view(data_text);
+									$('#search_ticket').click(); 
+								 }
+							 });	
+					 }); 
+				}  // if value 
+				});  // then
+	} // end function 
+				 
+	function make_payment(){ //	
+			ticket_no =  $('button.make_payment').attr('for'); // coded		
+			expc_pay =  $('button.make_payment').attr('data-text'); // coded		
+			discount = $('#discount'); 
+			amount_paid = $('#amount_payable'); 
+			paymode = $('input:radio.paymode:checked').val();  
+			
+			if(amount_paid.val()=="" ){
+				amount_paid.removeClass('border-success border-primary').addClass('border-danger');  
+				showToastPosition('bottom-center','Enter Amount Paid','Amount Paid Empty','error');	
+			}
+			else{  
+				amount_paid.removeClass('border-danger').addClass('border-success');  
+				/*********************/
+			 var l = Ladda.create(document.querySelector('.make_payment'));
+			/*********************/
+			 var req = $.ajax({ 
+				url:"formsubmit.php", data:{ make_payment:'now',amount_paid:amount_paid.val(),discount:discount.val(),
+				paymode:paymode,ticket_no:ticket_no,expc_pay:expc_pay}, method:"POST",beforeSend:function(){ l.start();  }}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed");  l.stop(); });
+				req.done(function(res){  var output = $.parseJSON(res);  l.stop(); 
+					 swal({title:output['title'],text:output['text'],icon:output['icon']})
+					 .then((next)=>{
+								  if(output['icon']=="success"){
+									 $('#search_ticket').click(); 
+								  }
+							 });
+				   }); 
+			} 
+			// alert(' ticket_no :'+ticket_no+',expc_pay '+expc_pay+' paymode : '+paymode ); 
+	} // end function 
+	
+	function show_ticket_info(data_text){
+		 ticket_info = data_text.split('|'); // $.parseJSON(data_text);
+		// alert(ticket_info);
+		window.setTimeout(function(){ 
+			$('span.ticket_no').html(ticket_info[0]);
+			$('span.fname').html(ticket_info[1]);
+			$('span.age').html(ticket_info[2]+' '+ticket_info[3]+'(s)');
+			$('span.sex').html(ticket_info[4]);
+			$('span.doctor').html(ticket_info[5]);
+			$('span.hospital').html(ticket_info[6]);
+			$('span.date_c').html(ticket_info[7]);
+			$('span.time_c').html(ticket_info[8]);
+			$('span.c_by').html(ticket_info[9]);
+		
+		},1500); 
+	}
+	function show_spin(){
+		$('li span.pull-right').html("<i class='fa fa-spin fa-spinner'></i>"); 
+	}
+	
+	

@@ -1,0 +1,975 @@
+
+	// jquery 
+	$(function(){
+		/******************* class=""****************/
+			 $('.datepicker').bootstrapMaterialDatePicker
+					({ time: false, clearButton: true });
+			
+			 $('.datetimepicker').bootstrapMaterialDatePicker
+					({ time: true, format: 'YYYY-MM-DD H:m:s', clearButton: true });
+				
+				// $('.timepicker').
+				$('.timepicker').bootstrapMaterialDatePicker
+					({ date: false, time: true, format: 'H:m:s', clearButton: true });
+				
+		 /*************************************/ 
+		 
+			load_bill_departments($('#customer_bill_dept_id'))
+			setTimeout(function(){  load_bill_category($('#customer_bill_dept_id').val(),$('#customer_billCateg')); },2500); 
+			
+			$('#customer_bill_dept_id').on('change',function(){
+				dept_id = $(this).val(); 
+				load_bill_category(dept_id,$('#customer_billCateg')); 
+			});
+  			 
+			$('#customer_bill_dept_id,#customer_billCateg').on('change',function(){
+				dept_id = $('#customer_bill_dept_id').val(); 
+				categ_id = $('#customer_billCateg').val(); 
+				elem = $('.disp_content'); 
+				
+				if(dept_id!="" && categ_id!="") { loader('show'); 
+				display_bill_ticket(dept_id,categ_id,elem);  }
+				else{ loader('hide');  }
+				console.log('dept: '+dept_id+', categ: '+categ_id);
+			}); 
+			
+			$('#bill_searcher,.bill_searcher').on('keyup',function(){
+				search_text = $(this).val();  elem = $('.search_result'); 
+				displayer = $('.num_list');  
+				if(search_text.length >=2) {  $.ajax({							
+						url: 'formsubmit.php',
+						type: 'POST',
+						data: {auto_search_bill_for_ticket:"",keyword:search_text},
+						success:function(data){
+							displayer.show();
+							displayer.html(data);
+						}
+					}); 
+					}
+					else {
+					displayer.hide(); // $('#patient_filter').attr('ref','');	
+					// $('#patient_filter2').attr('ref','');	
+				}
+			});  
+			/*****************/
+			
+			 
+			
+			/*****************/
+			$('a[data-toggle="tab"]').on('click',function(){
+				if($(this).parent('li').hasClass('disabled')) {return false; }
+			});
+			
+			/**** WHEN FILLING FORMS ******/
+			/***********************************/
+	 		$("input:text.newuserform,select.newuserform").on('change keyup focus',function(){
+				name = $(this).attr('name'); id = name = $(this).attr('id');  value = $(this).val(); 
+				switch(name){
+					case "surname": case "othername": case "sex": //  case "hospital": case "doctor": 
+					 {
+						if(value!="" && value.length>=3 ){
+							//$('.'+id+'_text').text(name+' ok');
+							$('.'+id+'_text').removeClass('border-danger').addClass('border-success');  
+							$('#'+id).removeClass('border-danger').addClass('border-success');  
+							$('.'+id+'_icon').removeClass('text-danger').addClass('text-success'); 
+						}
+						else {
+							// $('.'+id+'_text').text(name+' required'); 
+							$('.'+id+'_text').removeClass('border-success').addClass('border-danger'); 
+							$('#'+id).removeClass('border-success').addClass('border-danger');  
+							$('.'+id+'_icon').removeClass('text-success').addClass('text-danger');
+						}
+					} break; 
+
+					case "age": 
+					 {
+						if(value!="" && value.length>=1 ){
+							//$('.'+id+'_text').text(name+' ok');
+							$('.'+id+'_text').removeClass('border-danger').addClass('border-success');  
+							$('#'+id).removeClass('border-danger').addClass('border-success');  
+							$('.'+id+'_icon').removeClass('text-danger').addClass('text-success'); 
+						}
+						else {
+							// $('.'+id+'_text').text(name+' required'); 
+							$('.'+id+'_text').removeClass('border-success').addClass('border-danger'); 
+							$('#'+id).removeClass('border-success').addClass('border-danger');  
+							$('.'+id+'_icon').removeClass('text-success').addClass('text-danger');
+						}
+					} break; 
+				} // end switch 
+					
+			}); // end input texts 
+			
+			/**** WHEN SUBMITTING FORMS ******/
+			/*****************************************************************/
+				$('button#save_custom_profile').on('click',function(){	
+				mode = $(this).attr('mode');  ticket_no = $(this).attr('for');  // replaced for serial 
+				 $('input:text.newuserform,select.newuserform').each(function(){
+					 name = $(this).attr('name'); id = name = $(this).attr('id');  value = $(this).val(); 
+					 switch(name){
+						case "surname": case "othername": case "sex": // case "hospital": case "doctor": 
+						 {
+							if(value!="" && value.length>=3 ){								
+								$('.'+id+'_text').removeClass('border-danger').addClass('border-success');  
+								$('#'+id).removeClass('border-danger').addClass('border-success');  
+								$('.'+id+'_icon').removeClass('text-danger').addClass('text-success'); 
+							}
+							else {								
+								$('.'+id+'_text').removeClass('border-success').addClass('border-danger'); 
+								$('#'+id).removeClass('border-success').addClass('border-danger');  
+								$('.'+id+'_icon').removeClass('text-success').addClass('text-danger');
+							}
+						} break; 
+
+						case "age": 
+						 {
+							if(value!="" && value.length>=1 ){
+								//$('.'+id+'_text').text(name+' ok');
+								$('.'+id+'_text').removeClass('border-danger').addClass('border-success');  
+								$('#'+id).removeClass('border-danger').addClass('border-success');  
+								$('.'+id+'_icon').removeClass('text-danger').addClass('text-success'); 
+							}
+							else {
+								// $('.'+id+'_text').text(name+' required'); 
+								$('.'+id+'_text').removeClass('border-success').addClass('border-danger'); 
+								$('#'+id).removeClass('border-success').addClass('border-danger');  
+								$('.'+id+'_icon').removeClass('text-success').addClass('text-danger');
+							}
+						} break; 
+						
+						case "phone": 
+						 {
+							if(value!="" && value.length==11 ){
+								//$('.'+id+'_text').text(name+' ok');
+								$('.'+id+'_text').removeClass('border-danger').addClass('border-success');  
+								$('#'+id).removeClass('border-danger').addClass('border-success');  
+								$('.'+id+'_icon').removeClass('text-danger').addClass('text-success'); 
+							}
+							else {
+								// $('.'+id+'_text').text(name+' required'); 
+								$('.'+id+'_text').removeClass('border-success').addClass('border-danger'); 
+								$('#'+id).removeClass('border-success').addClass('border-danger');  
+								$('.'+id+'_icon').removeClass('text-success').addClass('text-danger');
+							}
+						} break; 
+					} // end switch 
+					 
+				 }); // end each 
+				
+				if($('#surname').val()!="" && $('#surname').val().length>=3 && $('#phone').val().length==11 && $('#othername').val().length>=3 && $('#age').val().length>=1 && $('#sex').val()!=""){
+					 // send to ajax 
+					 /*********************/
+						var l = Ladda.create(this);  
+						/*********************/
+						 var req = $.ajax({url : "formsubmit.php", method : "POST",
+							data : { save_new_customer_request:"new", surname:$('#surname').val(),phone:$('#phone').val(),
+							othername:$('#othername').val(),age:$('#age').val(), /** age_type:$('#age_type').val(),**/
+							sex:$('#sex').val(),doctor:$('#doctor').val(),hospital:$('#hospital').val(),consultant:$('#consultant').val(),
+							mode:mode,ticket_no:ticket_no,clinical_details:$('#clinical_details').val()
+							//username:$('#username').val(),psw:$('#password').val()
+							}, beforeSend:  function(){  l.start(); }	 }); 
+						
+						req.fail(function(e){ console.log(e.status);  l.stop();  });
+						 
+						req.done(function(res){ // alert(res);
+							var output = $.parseJSON(res);
+							showToastPosition('bottom-center',output['title'],output['text'],output['icon']);
+							l.stop(); 							
+							if(output['icon']=="success"){id = "stock-tab2";  enableTab(id);   showTab(id);}
+						}); // end ajax  
+				}   // end if 
+				else {
+					showToastPosition('bottom-center','Empty Forms','Please Complete The Forms','error'); 
+				}
+			 });  // end button  			  
+			
+			
+			
+		/************************/
+			$('select#ticket_specimens').on('change',function(){	
+				elem = $('.process_content'); serial = $(this).val();  ticket_no = $(this).attr('for');
+				var req = $.ajax({
+				url:"formsubmit.php", data:{ display_specimen_result_form:'all',serial:serial,ticket_no:ticket_no}, method:"POST",beforeSend:function(){loader('show'); console.log('serial: '+serial)} }); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ loader('hide'); 	elem.html(res); }); 				
+			});
+		
+		/************************/
+		/*********************************************************/
+		$('input:checkbox.stud_box').on('click',function(){			
+			serial = $(this).attr('for');
+			data = $(this).attr('data-text');
+			highlight_check_rows(); 
+		});
+		
+		/*********************************************/	 
+		 $('#view_project_analysis').on('click',function(){	 
+			$(this).toggleClass('fa-eye-slash text-warning'); 
+			var serial = $('select#ticket_specimens').val();  var ticket_no = $('select#ticket_specimens').attr('for');
+			$('.process_content').toggle();
+			elem = $('.summary_result');
+			if($(this).hasClass('fa-eye-slash')){
+				// $('.summary_result').toggleClass('fa fa-spin fa-spinner fa-3x');
+				 console.log('sending request for '+ticket_no);
+				 view_ticket_analysis(ticket_no,'no',elem); 				 
+			}
+			else{
+				 // $('.summary_result').toggleClass('fa fa-spin fa-spinner fa-3x');
+				 elem.html('');
+			}
+		 }); 
+		/*********************************************/	 
+		
+		/*********************************************/	 
+		 $('.viewtickets').on('click',function(){
+			 datefrom  = $('#datefrom'); 
+			 dateto  = $('#dateto'); 
+			 elem = $('.ticket_results');
+			 search_text = $('#comp_ticket_searcher'); 
+			 process_status = 'yes';
+			 search_type = $('input:radio.search_type:checked').val();  
+			 // format of form to display - text_form | param_form
+			 
+			 switch(search_type){
+				 case "text_form": {
+					if(search_text.val()==""){
+						showToastPosition('bottom-center',"Empty Ticket Number","Pleasse enter the ticket number","error"); 
+					}  else {
+						 var req = $.ajax({
+							url:"formsubmit.php", data:{ search_this_comp_ticket:'all',process_status:process_status, ticket_no:search_text.val()}, method:"POST",beforeSend:function(){ elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>");} }); 
+							req.fail(function(e){ console.log(" --- "+ e.status+" Failed"); elem.html(''); });
+							req.done(function(res){ elem.html(res);  /** alert(res); **/ }); 				 
+						} 
+				 } break;
+				 case "param_form": {
+					 if(datefrom.val()==""){ datefrom.focus(); }
+					 else if(dateto.val()==""){ dateto.focus(); }
+					 else {
+						 var req = $.ajax({
+							url:"formsubmit.php", data:{ view_ticket_dates:'all',search_type:search_type,process_status:process_status, datefrom:datefrom.val(), dateto:dateto.val()}, method:"POST",beforeSend:function(){ elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>");} }); 
+							req.fail(function(e){ console.log(" --- "+ e.status+" Failed"); elem.html(''); });
+							req.done(function(res){ elem.html(res);  /** alert(res); **/ }); 				 
+						} 
+						
+						} break; // end case param_form
+					 } // end switch 
+						
+			});
+		
+		/******************************/
+		$('#comp_ticket_searcher').on('keyup',function(){ 
+				search_text = $(this).val();  elem = $('.search_result'); 
+				/*********************/
+				var l = Ladda.create( document.querySelector('.viewtickets'));			
+				/**********************/
+				displayer = $('.num_list');  
+				if(search_text.length >=1) {  $.ajax({							
+						url: 'formsubmit.php',
+						type: 'POST',
+						data: {auto_search_complete_ticket:"",keyword:search_text},
+						beforeSend:function(){l.start(); /**  $('.search_result').html(''); **/},
+						success:function(data){
+							displayer.show();
+							displayer.html(data);
+							l.stop();
+							// output function : set_ticket_found(name,id)  is defined at tickets.php 
+						}
+					}); 
+					}
+					else {
+					displayer.hide(); // $('#patient_filter').attr('ref','');	 
+				}
+			});  
+			/*****************/
+			
+		
+		});		// jQuery
+	
+	/*********    *****************/
+	function  view_ticket_analysis(ticket_no,comp_status,elem){
+		var req = $.ajax({
+				url:"formsubmit.php", data:{ view_ticket_analysis:'all',ticket_no:ticket_no,comp_status:comp_status}, method:"POST",beforeSend:function(){ elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>");} }); 
+				req.fail(function(e){ console.log(" --- "+ e.status+" Failed"); elem.html(''); });
+				req.done(function(res){ elem.html(res);  /** alert(res); **/ }); 
+	}
+	/*********    *****************/
+	function  finalize_test_process(ticket_no,data_text){
+		// alert(ticket_no+' --- and --- '+data_text);
+		comment = $('#comment').val(); 
+		alt_test_name = $('#alt_test_name').val(); 
+		processes = data_text.split('|'); // yes or no 
+		
+		if($.inArray('no',processes) !==-1) swal('Cannot Finalize Now','Reason : All the test result has not been computed','error');
+		
+		else { 
+			// finalize the report 
+			/*********************/
+			 var l = Ladda.create( document.querySelector('#finalize_test_process'));
+			/*********************/
+			var req = $.ajax({
+				url:"formsubmit.php", data:{ finalize_test_process:'all',ticket_no:ticket_no,comment:comment,alt_test_name:alt_test_name}, method:"POST",beforeSend:function(){ l.start(); } }); 
+				req.fail(function(e){ console.log(" --- "+ e.status+" Failed");  l.stop();  });
+				req.done(function(res){  l.stop();   
+					var output = $.parseJSON(res); 
+					 // showToastPosition('bottom-center',output['title'],output['text'],output['icon']);					
+					 swal(output['title'],output['text'],output['icon']);					
+					 if(output['icon']=="success") { window.location.href=output['href']; }
+				/*** alert() ***/ }); 
+		}   
+		
+	}
+	/************** functions ***************/	
+	function print_results(ticket_no){ 
+		specimens = []; 
+		$("input:checkbox.specimen_results_check:checked").each(function() {
+			specimens.push($(this).val());
+		});
+		if(specimens.length==0){ swal({title:'No Completed Result Was Selected',icon:'error'}); }
+		 else {
+			  $(this).target = "_blank";
+				/// var url = "tick_result_part_print.php?r_val="+ ticket_no+'&spc='+specimens;
+				var url = "tick_result_part_print.php?r_val="+ ticket_no+'&spc='+specimens;
+				// window.open($(this).prop('href'));
+				$("input:checkbox.specimen_results_check").iCheck('uncheck');
+				window.open(url);// part_prints
+			 
+		 }
+	}
+	/************** functions ***************/	
+	function download_results(ticket_no){ 
+		specimens = []; 
+		$("input:checkbox.specimen_results_check:checked").each(function() {
+			specimens.push($(this).val());
+		});
+		if(specimens.length==0){ swal({title:'No Completed Result Was Selected',icon:'error'}); }
+		 else {
+			  $(this).target = "_blank";
+				/// var url = "tick_result_part_print.php?r_val="+ ticket_no+'&spc='+specimens;
+				var url = "tick_result_part_dnld.php?r_val="+ ticket_no+'&spc='+specimens;
+				// window.open($(this).prop('href'));
+				$("input:checkbox.specimen_results_check").iCheck('uncheck');
+				window.open(url);// part_prints
+			 
+		 }
+	}
+	/************** functions ***************/	
+	
+	function resolve_specimen_date_computation(ticket_no){ 
+		 var req = $.ajax({
+				url:"formsubmit.php", data:{ resolve_specimen_date_computation:'all',ticket_no:ticket_no}, method:"POST",beforeSend:function(){  } }); 
+				req.fail(function(e){ console.log(" --- "+ e.status+" Failed");     });
+				req.done(function(res){  // alert(res);;
+					 var output = $.parseJSON(res); 
+					  showToastPosition('bottom-center',output['title'],output['text'],output['icon']);					
+					 // swal(output['title'],output['text'],output['icon']);  
+				});
+		 
+	}
+	/************** functions ***************/	
+	function enableTab(id){ 
+		$('.nav-tabs a[href="#'+id+'"]').parent('li').removeClass('disabled');
+	}
+	
+	function disableTab(id){ 
+		$('.nav-tabs  a[href="#'+id+'"]').parent('li').addClass('disabled');
+	}
+	
+	function showTab(id){
+		$('.nav-tabs a[href="#'+id+'"]').tab('show');  
+	} 
+	
+	function loader(disp_type='show'){
+		if(disp_type=='show') { $('p.loader').show(); $('span.loader').addClass('fa fa-spinner fa-spin fa-3x'); }
+		if(disp_type=='hide') { $('p.loader').hide(); $('span.loader').removeClass('fa fa-spinner fa-spin fa-3x'); }
+		// if(disp_type=='hide') { $('p.loader').hide(); $('span.loader').removeClass('mdi mdi-loading mdi-spin fa-3x'); }
+	}
+	
+	/************************/
+	function display_bill_ticket(dept_id,categ_id,elem){
+			var req = $.ajax({
+				url:"formsubmit.php", data:{ display_bill_ticket:'all',dept_id:dept_id,categ_id:categ_id}, method:"POST" }); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ elem.html(res); loader('hide');  /** alert(res); **/ }); 
+	}
+	/************************/
+
+	 function display_form(){
+		  elem = $("input:checkbox#view_mode,input:checkbox#view_mode_2"); 
+				  if(elem.prop('checked')){
+					$('div.search').show(); $('div.selection').hide(); }
+					else  {  $('div.search').hide(); $('div.selection').show(); }  
+	 }
+	 
+	 function add_this_specimen(serial,elem_spec){ 
+		
+		 if(elem_spec.val()==""){  loader('hide');
+			 showToastPosition('bottom-center','No Specimen','Please Enter The Specimen Brought','error'); 
+		 }
+		 else {
+			 var req = $.ajax({
+				url:"formsubmit.php", data:{ add_this_specimen:'all',serial:serial,sample:elem_spec.val()}, method:"POST",beforeSend:function(){loader('show');} }); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ elem = $('.specimen_added'); display_my_specimen(elem);  loader('hide'); 
+					var output = $.parseJSON(res); 
+					 showToastPosition('bottom-center',output['title'],output['text'],output['icon']);					
+				    });  
+		 }
+	 } 
+	 
+	 
+	 function display_my_specimen(elem){
+		    var req = $.ajax({
+				url:"formsubmit.php", data:{ display_my_specimen:'all'}, method:"POST",beforeSend:function(){loader('show');} }); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ loader('hide'); 	elem.html(res); }); 
+	 }
+	
+	function display_my_final_specimen(elem){
+		    var req = $.ajax({
+				url:"formsubmit.php", data:{ display_my_final_specimen:'all'}, method:"POST",beforeSend:function(){loader('show');} }); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ loader('hide'); 	elem.html(res); }); 
+	 }
+	 
+	 /*************************************/
+	 
+	 
+	 /** REMOVING SPECIMEN SAMPLE FROM LIST ***/
+		 
+		/*************************************/
+		function del_customer_specimen(data_text) {				
+			infos = data_text.split('|'); // specimen | bill type | serial 
+			 /********/
+			swal({icon:'warning',title: ' Delete '+infos[0]+' ?', closeOnEsc:false,closeOnClickOutside:false,				 
+			buttons: {
+			  cancel: {
+				text: "Cancel",value: null,visible: true,
+				closeModal: true,
+			  },
+			  confirm: {
+				text: "Yes, Delete!", value: true,visible: true,
+				closeModal: false
+			  }
+			},
+			text:"About Deleting "+infos[0]+", under "+infos[1],dangerMode:true})
+			.then((value) => {
+			  if(value) {
+				/** when confirmed.. send to server **/
+				/**********************************************/
+				var req = $.ajax({url : "formsubmit.php",method : "POST",data:{ del_customer_specimen:"this",serial:infos[2],name:infos[0],btype:infos[1]},beforeSend:function(){console.log(infos)}  	});
+				req.fail(function(e){  console.log(e.status+" Failed"); });
+				req.done(function(res){ // alert(res);
+					  var output = $.parseJSON(res);
+						 swal({title:output['title'],text:output['text'],icon:output['icon']})
+						 .then((next)=>{
+							 if(output['icon']=="success"){
+								 display_my_specimen($('.specimen_added'));
+							 }
+						 });	
+				 }); 
+				/**********************************************/				
+			  } 
+			});
+	 } 
+		/*************************************/
+	
+	function  create_ticket(){
+		// amount_paid = $('#amount_paid'); 
+		comment = $('#comment'); 
+		// alert('amount_paid :'+amount_paid.val()+' , comment :'+comment.val());
+		var req = $.ajax({ // amount_paid:amount_paid.val(),
+				url:"formsubmit.php", data:{ create_ticket:'this',comment:comment.val()}, method:"POST",beforeSend:function(){loader('show');}}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ loader('hide'); // alert(res);   
+					 var output = $.parseJSON(res); 
+					 showToastPosition('bottom-center',output['title'],output['text'],output['icon']);	
+					 if(output['icon']=="success") window.location.href="ticket_paym.php?nextact="+output['pay_id'];
+					 display_my_final_specimen($('.final_specimen_form')); 
+				   }); 
+	}
+	
+	function  view_tickets(process_status,elem,process_date=""){ 
+		var req = $.ajax({ 
+				url:"formsubmit.php", data:{ view_tickets:'this',process_status:process_status,process_date:process_date}, method:"POST",beforeSend:function(){  elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>"); }}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ loader('hide');   // alert(res);    
+					 elem.html(res);
+				   }); 
+	}
+	
+	function  view_tickets_to_modify(process_status,elem ){ 
+		var req = $.ajax({ 
+				url:"formsubmit.php", data:{ view_tickets_to_modify:'this',process_status:process_status}, method:"POST",beforeSend:function(){  elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>"); }}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ loader('hide');   // alert(res);    
+					 elem.html(res);
+				   }); 
+	}
+	
+	function togInputDisabled(prop_status,input_elem){		
+		if(prop_status==true) input_elem.prop('disabled',false);
+		if(prop_status==false) input_elem.prop('disabled',true); 
+	}
+	
+	//	($(this).prop('checked'),$('#specimen_template_form'))
+	
+	function togTemplateForm(prop_status,elem){		
+		if(prop_status==true) elem.removeClass('invisible').addClass('visible');
+		if(prop_status==false) elem.removeClass('visible').addClass('invisible');
+	}
+		
+	function save_template_settings(){	 	
+		bill_type_id = $('#ticket_specimens'); console.log(bill_type_id.val()); 
+		result_name = $('#result_name'); 
+		has_unit = $('input:checkbox#has_unit'); 
+		unit = $('#unit');  ref_val = $('#ref_val');  age_range = $('#age_range');  
+		has_ref_val = $('input:checkbox#has_ref_val'); //  console.log('has_unit : '+has_unit.prop('checked')); // console.log('has_ref_val : '+has_ref_val.prop('checked'));
+		// 
+		if(result_name.val()==""){
+			result_name.removeClass('border-success border-primary ').addClass('border-danger');  
+			showToastPosition('bottom-center','Empty Name','Please Enter the Result Name','error');	
+		}
+		else if(age_range.val()==""){
+			age_range.removeClass('border-success border-primary ').addClass('border-danger');  
+			showToastPosition('bottom-center','Empty Age range','Please Select the Age range','error');	
+		}
+		else if(has_unit.prop('checked')==true && unit.val()==""){
+			unit.removeClass('border-success border-primary ').addClass('border-danger');  
+			showToastPosition('bottom-center','Empty Unit Value','Please Enter the Unit Value','error');	
+		}
+		else if(has_ref_val.prop('checked')==true && ref_val.val()==""){
+			ref_val.removeClass('border-success border-primary ').addClass('border-danger');  
+			showToastPosition('bottom-center','Empty Reference Value','Please Enter the Reference Value','error');	
+		}
+		else{
+			result_name.removeClass('border-danger border-primary ').addClass('border-success'); 
+			age_range.removeClass('border-danger border-primary ').addClass('border-success'); 
+			unit.removeClass('border-danger border-primary ').addClass('border-success'); 
+			ref_val.removeClass('border-danger border-primary ').addClass('border-success');  
+			/*********************/
+			 var l = Ladda.create( document.querySelector('#save_template_settings'));
+			/*********************/
+			 var req = $.ajax({ 
+				url:"formsubmit.php", data:{ save_template_settings:'this',name:result_name.val(),age_range:age_range.val(),bill_type_id:bill_type_id.val(),
+				has_unit:has_unit.prop('checked'),has_ref_val:has_ref_val.prop('checked'), unit:unit.val(),ref_val:ref_val.val()}, method:"POST",beforeSend:function(){ l.start();  }}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed");  l.stop(); });
+				req.done(function(res){  var output = $.parseJSON(res);  l.stop(); 
+					 showToastPosition('bottom-center',output['title'],output['text'],output['icon']);	
+				   });  
+			
+		} // end validation  
+	
+	} // end function 
+	function save_template_settings_2(mode,bill_type_id){	 	
+		// bill_type_id = $('#save_template_settings_2,#update_template_settings_2').attr('for');  
+		// mode : new / update 
+		  
+		temp_type = $('input:radio.form_type:checked').val();  // format of result - text_form | param_form
+		elem = $('#result_template');  
+		
+		/*********************/ 
+		
+		result_name = $('#result_name'); 
+		has_unit = $('input:checkbox#has_unit'); 
+		unit = $('#unit');  ref_val = $('#ref_val');  age_range = $('#age_range');  
+		has_ref_val = $('input:checkbox#has_ref_val'); //  console.log('has_unit : '+has_unit.prop('checked')); // console.log('has_ref_val : '+has_ref_val.prop('checked'));
+		upd_serial = $('#update_template_settings_2').attr('data-text');
+		
+		/************ console.log(temp_type);  *********/ 
+		
+		switch(temp_type){ 
+			case 'text_form': {
+				 raw_text_val = tinymce.activeEditor.getContent();  // alert(raw_text_val); 				
+				  if(raw_text_val==""){
+					showToastPosition('bottom-center','Empty Word','Please Enter Sample of the raw Text value','error');	
+				}
+				else{
+					/********************/ 
+					 var l = Ladda.create( document.querySelector('#save_template_settings_2'));
+					 var l2 = Ladda.create( document.querySelector('#update_template_settings_2'));
+					/*******************/
+					var req = $.ajax({ 
+				url:"formsubmit.php", data:{ save_template_settings:'this',raw_text_val:raw_text_val,temp_type:temp_type,bill_type_id:bill_type_id,mode:mode, upd_serial:upd_serial, 
+				   }, method:"POST",beforeSend:function(){ l.start(); l2.start(); console.log('sending raw text values'); }}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed");  l.stop();l2.stop(); });
+				req.done(function(res){  var output = $.parseJSON(res);  l.stop(); l2.stop(); 
+					 showToastPosition('bottom-center',output['title'],output['text'],output['icon']);	
+					 view_bill_result_template(bill_type_id,elem); 
+				   });
+				 }  
+				} break;  /** end case **/
+			case 'param_form': { 
+					unit_val = tinymce.activeEditor.getContent(); 
+				if(result_name.val()==""){
+					result_name.removeClass('border-success border-primary ').addClass('border-danger');  
+					showToastPosition('bottom-center','Empty Name','Please Enter the Result Name','error');	
+				}
+				else if(age_range.val()==""){
+					age_range.removeClass('border-success border-primary ').addClass('border-danger');  
+					showToastPosition('bottom-center','Empty Age range','Please Select the Age range','error');	
+				}
+				else if(has_unit.prop('checked')==true && unit_val ==""){
+					unit.removeClass('border-success border-primary ').addClass('border-danger');  
+					showToastPosition('bottom-center','Empty Unit Value','Please Enter the Unit Value','error');	
+				}
+				else if(has_ref_val.prop('checked')==true && ref_val.val()==""){
+					ref_val.removeClass('border-success border-primary ').addClass('border-danger');  
+					showToastPosition('bottom-center','Empty Reference Value','Please Enter the Reference Value','error');	
+				}
+				else{
+					result_name.removeClass('border-danger border-primary ').addClass('border-success'); 
+					age_range.removeClass('border-danger border-primary ').addClass('border-success'); 
+					unit.removeClass('border-danger border-primary ').addClass('border-success'); 
+					ref_val.removeClass('border-danger border-primary ').addClass('border-success');  
+					/*********************/
+					 var l = Ladda.create( document.querySelector('#save_template_settings_2'));
+					 var l2 = Ladda.create( document.querySelector('#update_template_settings_2'));
+					/*********************/
+					 var req = $.ajax({ 
+						url:"formsubmit.php", data:{ save_template_settings:'this',temp_type:temp_type,name:result_name.val(),age_range:age_range.val(),bill_type_id:bill_type_id,mode:mode, upd_serial:upd_serial, 
+						has_unit:has_unit.prop('checked'),has_ref_val:has_ref_val.prop('checked'), unit:unit_val,ref_val:ref_val.val()}, method:"POST",beforeSend:function(){ l.start(); l2.start(); console.log('has_ref_val = '+has_ref_val.prop('checked')+', has_unit = '+has_unit.prop('checked')); }}); 
+						req.fail(function(e){ console.log(" --- "+e.status+" Failed");  l.stop();l2.stop(); });
+						req.done(function(res){  var output = $.parseJSON(res);  l.stop(); l2.stop(); 
+							 showToastPosition('bottom-center',output['title'],output['text'],output['icon']);	
+							 view_bill_result_template(bill_type_id,elem); 
+						   });  
+					
+					} // end validation  
+				} break;  /** end case **/
+		} /** end switch **/
+	
+	} // end function 
+	
+	function update_specimen_template(data_text){
+		$('input:radio.param_form').click();
+		infos = data_text.split('|'); //  age_range , name , unit , ref_val , bill_type_id , upd_serial, has_unit , has_ref_val , 		 
+		$('select#age_range option[value="' + infos[0]+'"]').prop('selected', true);
+		$('#result_name').val(infos[1]);		
+		// $('#unit').val(infos[2]);
+		// tinymce.get('unit').setContent(infos[2]);	
+		tinymce.activeEditor.setContent(infos[2]);
+		$('#ref_val').val(infos[3]);
+		$('#save_template_settings_2').attr('for',infos[4]); 
+		$('#update_template_settings_2').attr('data-text',infos[5]); 
+		show_update_buttons(); 
+	}
+	
+	/**
+	function update_specimen_text_template(data_text,upd_ref){
+		  $('input:radio.text_form').click(); 
+			var ed = tinymce.get('result_text');
+			ed.setProgressState(1);
+			window.setTimeout(function(){  
+			   ed.setProgressState(0);
+			   ed.focus(); 
+			   ed.setContent(data_text);
+			   alert(ed.getContent()); 
+			},3000); 
+		show_update_buttons(); 
+		
+	}  **/
+	function update_specimen_text_template(data_text,upd_ref){
+		  $('input:radio.text_form').click(); 
+			// tinymce.get('result_text').focus();
+			var ed = tinymce.activeEditor;
+			ed.setProgressState(1);
+			window.setTimeout(function(){  
+			   ed.setProgressState(0); 
+			   ed.setContent(data_text); 
+			 // alert('id = '+ed.id+', mode = '+ed.mode+', theme = '+ed.theme); 
+			},500); 
+		// show_update_buttons(); 
+		
+	}
+	
+	function save_specimen_result(){
+		 var temps = [];	temp_id = [];	scores = []; 	test_comment =  $('#test_comment'); date_perform =  $('#date_perform');
+		 var custom_bill_info = $('#save_specimen_result_btn').attr('data-text'); // ticket_no |  bill_type_id
+		 proceed = true; 
+			$("input:checkbox.stud_box:checked").each(function() {
+				temps.push($(this).val());
+			});
+		 if(temps.length == 0 ) {
+				swal('empty result','Please ensure you select the result type to save','warning' ); 
+				proceed = false; 
+				return false; 
+			}
+			else if(date_perform.val()==""){
+				swal('No Date Performed','Please ensure you select the date perfomed','warning' ); 
+				proceed = false; 
+				return false; 
+			}
+			else{
+				$("input:checkbox.stud_box:checked").each(function() {
+					 var txt = $(this).closest('tr').find('input[type=text]');
+						if (txt.val() == "") {							
+							txt.removeClass('border-success').addClass('border-danger'); //textbox is empty							
+							proceed = false; txt.focus();  
+						} 
+						else {
+							/****** save all results ***********/   
+							temp_id.push($(this).val());
+							scores.push(txt.val()); 
+							/*******************************/
+							txt.removeClass('border-danger').addClass('border-success');							 					 
+						}
+				}); // end forEach 
+				
+				if(proceed == true){
+					/**********************/
+					
+					var l = Ladda.create( document.querySelector('#save_specimen_result_btn'));
+					l.start(); 
+					/**********************/
+					var req = $.ajax({
+							url:"formsubmit.php", data:{ save_specimen_spreadsheet:'this',test_comment:test_comment.val(),
+							temp_id:temp_id, scores:scores,custom_bill_info:custom_bill_info, date_perform:date_perform.val() }, method:"POST",
+							beforeSend: function(){ l.start(); } });  
+							
+						req.fail(function(e){ console.log(" --- "+e.status+" Failed"); l.stop(); });
+						req.done(function(res){  var output = $.parseJSON(res);  l.stop(); 
+							showToastPosition('bottom-center',output['title'],output['text'],output['icon']);
+							}); 
+						/**********/
+				} // end if true 		
+				
+			}
+	}
+	
+	function save_specimen_text_result(){		
+		 var custom_bill_info = $('#save_specimen_text_result_btn').attr('data-text'); // ticket_no |  bill_type_id
+		 var date_perform = $('#date_perform_text').val();
+		 // alert(custom_bill_info); 
+			/**********************/
+			result = tinymce.activeEditor.getContent(); 	
+				var l = Ladda.create( document.querySelector('#save_specimen_text_result_btn'));			
+				/**********************/
+				// alert(result);
+					var req = $.ajax({
+						url:"formsubmit.php", data:{ save_specimen_text_result:'this',
+						custom_bill_info:custom_bill_info,result:result,date_perform:date_perform }, method:"POST",
+						beforeSend: function(){   l.start(); 
+						} });  
+						
+					req.fail(function(e){ console.log(" --- "+e.status+" Failed"); l.stop(); });
+					req.done(function(res){  var output = $.parseJSON(res);  l.stop(); 
+						showToastPosition('bottom-center',output['title'],output['text'],output['icon']);
+					}); 
+				/**********/ 
+	}
+	/********************/
+	
+// javascript 
+	function highlight_check_rows(){ // alert('am called');
+		$('tr .stud_box').each(function() {
+				if(this.checked) {
+					$(this).closest('tr').removeClass('table-default');
+					$(this).closest('tr').addClass('table-success');
+				}	
+				else {
+					$(this).closest('tr').removeClass('table-success');
+					$(this).closest('tr').addClass('table-default');
+				}
+			});
+			
+	}
+	
+	 function set_bill_searched(name,id) {
+		// change input value
+		$('#bill_searcher').val(name);
+		$('#bill_searcher').attr('ref',id);	 				
+		$('.num_list').hide(); elem = $('.disp_content');
+		console.log('name: '+name+', id: '+id);
+		/** send request for form - **/
+		var req = $.ajax({
+				url:"formsubmit.php", data:{ display_bill_ticket_searched:'all',serial:id},beforeSend:function(){loader('show');}, method:"POST" }); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){ elem.html(res); loader('hide');  /** alert(res); **/ });
+	}
+	///////////////////////
+	 
+	 /*************************************/
+		function update_specimen_template_status(data_text) {				
+			infos = data_text.split('|'); // temp result name | bill type | bill_type_id | serial  
+			 elem = $('#result_template'); 			
+				/** when confirmed.. send to server **/
+				/**********************************************/
+				var req = $.ajax({url : "temp_formsubmit.php",method : "POST",
+					data:{ update_specimen_template_status:"this",serial:infos[3],
+					name:infos[0]},beforeSend:function(){console.log(data_text)}  
+					});
+				req.fail(function(e){  console.log(e.status+" Failed"); });
+				req.done(function(res){   // alert(res);
+					 //  var output = $.parseJSON(res);
+						 view_bill_result_template(infos[2],elem); 
+							
+					});					  
+			} 
+	 /*************************************/
+		 
+	 /*************************************/
+		function update_specimen_text_template_status(data_text) {				
+			infos = data_text.split('|'); // bill name | bill_type_id | serial  
+			 elem = $('#result_template'); 
+			 /********/
+				/** when confirmed.. send to server **/
+				/**********************************************/
+				var req = $.ajax({url : "temp_formsubmit.php",method : "POST",
+					data:{ update_specimen_text_template_status:"this",
+					serial:infos[2],name:infos[0]},
+					beforeSend:function(){console.log(data_text)} 
+					});
+				req.fail(function(e){  console.log(e.status+" Failed"); });
+				req.done(function(res){ // alert(res);
+					view_bill_result_template(infos[1],elem); 		// bill_type_id , elem 							 
+				}); 
+				/**********************************************/				
+			
+	 }  
+	
+	 
+	
+	 /*************************************/
+		function del_specimen_template(data_text) {				
+			infos = data_text.split('|'); // temp result name | bill type | bill_type_id | serial  
+			 elem = $('#result_template'); 
+			 /********/
+			swal({icon:'warning',title: ' Delete '+infos[0]+' ? ', closeOnEsc:false,closeOnClickOutside:false,				 
+			buttons: {
+			  cancel: {
+				text: "Cancel",value: null,visible: true,
+				closeModal: true,
+			  },
+			  confirm: {
+				text: "Yes, Delete!", value: true,visible: true,
+				closeModal: false
+			  }
+			},
+			text:"About Deleting "+infos[0]+", under "+infos[1],dangerMode:true})
+			.then((value) => {
+			  if(value) {
+				/** when confirmed.. send to server **/
+				/**********************************************/
+				var req = $.ajax({url : "temp_formsubmit.php",method : "POST",data:{ del_specimen_template:"this",serial:infos[3],name:infos[0]},beforeSend:function(){console.log(data_text)}  	});
+				req.fail(function(e){  console.log(e.status+" Failed"); });
+				req.done(function(res){   // alert(res);
+					  var output = $.parseJSON(res);
+						 swal({title:output['title'],text:output['text'],icon:output['icon']})
+						 .then((next)=>{
+							 if(output['icon']=="success"){
+								 view_bill_result_template(infos[2],elem); 		// bill_type_id , elem 						 
+							 }
+						 });	
+				 }); 
+				/**********************************************/				
+			  } 
+			});
+	 } 
+	 /*************************************/
+		function del_specimen_text_template(data_text) {				
+			infos = data_text.split('|'); // bill name | bill_type_id | serial  
+			 elem = $('#result_template'); 
+			 /********/
+			swal({icon:'warning',title: " Delete "+infos[0]+"'s template ? ", closeOnEsc:false,closeOnClickOutside:false,				 
+			buttons: {
+			  cancel: {
+				text: "Cancel",value: null,visible: true,
+				closeModal: true,
+			  },
+			  confirm: {
+				text: "Yes, Delete!", value: true,visible: true,
+				closeModal: false
+			  }
+			},
+			text:"About Deleting "+infos[0]+", Template Format ",dangerMode:true})
+			.then((value) => {
+			  if(value) {
+				/** when confirmed.. send to server **/
+				/**********************************************/
+				var req = $.ajax({url : "temp_formsubmit.php",method : "POST",data:{ del_specimen_text_template:"this",serial:infos[2],name:infos[0]},beforeSend:function(){console.log(data_text)}  	});
+				req.fail(function(e){  console.log(e.status+" Failed"); });
+				req.done(function(res){   // alert(res);
+					  var output = $.parseJSON(res);
+						 swal({title:output['title'],text:output['text'],icon:output['icon']})
+						 .then((next)=>{
+							 if(output['icon']=="success"){
+								 view_bill_result_template(infos[1],elem); 		// bill_type_id , elem 						 
+							 }
+						 });	
+				 }); 
+				/**********************************************/				
+			  } 
+			});
+	 }  
+		/*************************************/
+	function display_temp_form_type(type="all"){
+			$('div.form-group.all').hide('fast'); 
+			$('div.form-group.'+type).show('fast');  			
+			if(type=="param_form"){ reload_unit_tinymce();   }
+			else if (type=="text_form"){ reload_text_tinymce(); } 
+	}
+	
+	/*************************************/
+	function display_search_type(type="all"){
+			$('div.all').hide('fast'); 
+			$('div.'+type).show('fast');  			
+			// if(type=="param_form"){ reload_unit_tinymce();   }
+			// else if (type=="text_form"){ reload_text_tinymce(); } 
+	}
+	
+	function maximize_win(elem){
+		// elem.removeClass('col-md-6').addClass('col-md-12');
+		elem.toggleClass('col-md-12');
+	}
+	
+	/*** when viewing inputed text for specimen result  *********/
+	function display_my_raw_text_submit(data_text,elem){
+			var req = $.ajax({ 
+				url:"formsubmit.php", data:{ display_my_raw_text_submit:'this',info:data_text}, method:"POST",beforeSend:function(){  elem.html("<i class='fa fa-spinner fa-spin fa-3x'></i>"); console.log('sending request :'+data_text); }}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){   // alert(res);    
+					 elem.html(res);
+				   }); 
+	}
+	
+	/*** when saving inputed text for specimen result  *********/
+	function load_user_system_temp_values(data_text,elem){
+			var req = $.ajax({ 
+				url:"formsubmit.php", data:{ load_user_system_temp_values:'this',info:data_text}, method:"POST",beforeSend:function(){ console.log('sending request :'); }}); 
+				req.fail(function(e){ console.log(" --- "+e.status+" Failed"); loader('hide'); });
+				req.done(function(res){   // alert(res);    
+					$('button#save_specimen_text_result_btn').attr('data-text',data_text);
+					var output = $.parseJSON(res);
+					$('#date_perform_text').val(output['date_perform']);
+				// initialize the text area 
+				if(tinymce.execCommand('mceRemoveEditor', false, elem)) {
+					tinymce.init({
+					  selector: 'textarea#'+elem, 
+					  height:600, 
+					  plugins: [
+						'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+						'searchreplace wordcount visualblocks visualchars code fullscreen',
+						'insertdatetime media nonbreaking save table directionality',
+						'emoticons template paste textpattern imagetools codesample toc help'
+					  ],
+					  toolbar1: 'undo redo | insert | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+					  toolbar2: 'print preview media | forecolor backcolor emoticons | codesample help',
+					}); 
+				}
+				// now load the content 
+				var ed = tinymce.activeEditor;
+					ed.setProgressState(1);
+					window.setTimeout(function(){  
+					   ed.setProgressState(0); 
+					   ed.setContent(output['text']); 					
+					},2000);
+							 
+				   }); 
+		}
+		
+	
+	$(document).on('focusin',function(e){
+		if($(e.target).closest(".mce-window, .tox-tinymce-aux, .moxman-window, .tam-assetmanager-root").length){
+			e.stopImmediatePropagation();
+		}
+	});

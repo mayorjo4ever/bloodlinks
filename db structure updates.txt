@@ -1,0 +1,22 @@
+
+	OLOYEDE, Ganiyat Temitope from the Department of Biochemistry
+	
+	AWOTUNDE, Benjamin Oluwagbemiga from the Department of Educational Technology
+	
+	ABDULRAHMAN, Abdulwaheed Abiodun from the Department Of Arts Education
+
+   
+   ==updates==
+   ===============
+   1. change billtypes date_c,date_upd structure to timestamp
+   2. added new field : fit_for_donation to customer_specimen
+   3. change customer_specimen  date_perform structure to timestamp
+   new
+   =======
+   4.created new table 'report_templates'
+   5. ALTER TABLE `customer_specimen` ADD `blood_purchase_report` LONGTEXT NULL AFTER `comment`;
+   6. ALTER TABLE `customer_specimen` ADD `patient_blood_type_id` TINYINT(3) NULL AFTER `blood_type_id`, ADD `blood_compatibility` ENUM('Compatible','Not Compatible') NULL AFTER `patient_blood_type_id`;
+   6. ALTER TABLE `customer_specimen` ADD `blood_cross_matching`  ENUM('Emergency','Routine') NULL AFTER `blood_compatibility`;
+   7. Created a new page : Blood Purchase Report
+   8. ALTER TABLE `system_info` ADD `branch_address` TEXT NOT NULL DEFAULT '<h1 class=\"mr-auto text-dark font-30 bold\"><strong>Bloodlinks Haematological Centre</strong></h1> <p>&nbsp;<span style=\"font-size: 14pt;\"> No 100, Off General Abdullahi Road, Fateh/Tanke Ilorin, Kwara State &nbsp; </span><br /><span style=\"font-size: 14pt;\">(+234) 803 4088 965, (234) 706 9967 008, (234) 802 9005 206 &nbsp; &nbsp; </span><br /><span style=\"font-size: 14pt;\">noeply@bloodlinks.ng , https://bloodlinks.ng&nbsp;</span></p>' AFTER `address`;
+   9. ALTER TABLE `customer_info` CHANGE `sex` `sex` VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL;

@@ -1,0 +1,189 @@
+<?php 
+   require "usercheck.php"; 
+   include_once "new_ticket_reminder.php";  
+   include_once "formsubmit.php";  
+   
+   ?> 
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <!-- Required meta tags -->
+      <?php require "admin_style_link.php";?>   <!-- 
+         <link rel="stylesheet" href="../assets/vendors/dropzone/dropzone.css">   -->
+      <!-- <link href="../assets/vendors/zoom-magnify/dist/css/magnify.css" rel="stylesheet" type="text/css"> -->
+      <link href="../assets/vendors/zoomsl/assets/style.css" rel="stylesheet" type="text/css">
+      <link rel="stylesheet" href="../assets/vendors/icheck/skins/all.css">
+      <link rel="stylesheet" href="../assets/css/berlin-font/berlin.ttf">
+      <!-- bootstrap check toggle (switch)  
+         <link href="../assets/toggle/css/bootstrap-toggle.css" rel="stylesheet">
+         <link href="../assets/toggle/css/bootstrap.css" rel="stylesheet">-->
+      <style>
+         table tr, table thead td, table td, table thead th, table th {
+         border:1px solid #fff; margin:5px; padding:5px; 
+         line-height:5px; background:transparent; 
+         }
+         .border-lines tr th,.border-lines tr td, .border-lines tr { border:1px solid #000; }
+      </style>
+   </head>
+   <body>
+      <div class="container-scroller">
+         <!-- partial:partials/_horizontal-navbar.html -->
+         <?php require "partials/_horizontal-navbar.php"; ?>
+         <!-- partial -->
+         <div class="container-fluid page-body-wrapper">
+            <div class="main-panel container">
+               <div class="content-wrapper">
+                  <div class="row">
+                     <div class="col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+                        <div class="card">
+                           <div class="card-body" style="height:auto">
+                              <h4 class="card-title bold h3">   <?php  echo $this_page['title']; ?>  </h4>
+                              <div class="row bg-inverse-info " style="margin:12px; padding:12px; ">
+                                 <?php $ticket_no = base64_decode($_REQUEST['r_val']); 
+                                    $proc_comp = base64_decode($_REQUEST['pc']); 
+                                    ## validate 
+                                    $criterial = array('ticket_no'=>$ticket_no,'status'=>'active','process_completed'=>$proc_comp); 
+                                    $fields = $mydal->TableFields('customer_tickets');
+                                    $exist = $dbm->getFields($dbm->select('customer_tickets',$criterial),$fields);
+                                    if(is_null($exist)) { echo "<script> alert('Invalid Parameters'); window.location.href='tickets.php';  </script> "; }
+                                    
+                                    ?> 
+                                 <div class="col-md-8 col-sm-8 col-xs-8">
+                                    <div class="card">
+                                       <div class="card-header " style="padding-bottom:12px; margin-bottom:12px;">
+                                          <div class="col-md-3 float-left" style="padding:0px; margin:0px;"> <i class="fa fa-bathtub icon-lg text-primary d-flex align-items-center"></i>  </div>
+                                          <div class="col-md-9  float-left"  style="padding:0px; margin:0px;">
+                                             <h4 class="card-title bold h3 font-20 text-info"> enter the lab report </h4>
+                                          </div>
+                                       </div>
+                                       <!-- ./ card-header -->
+                                       <div class="card-body">
+                                          <div class="row">
+                                             <div class="col-md-12">
+                                                <?php  # print_r($fields); ?>
+                                                <div class="form-group row text-capitalize">
+                                                   <label for="title" class="col-sm-3 col-form-label bold"> select test type   </label>
+                                                   <div class="col-sm-9">
+                                                      <div class="input-group">
+                                                         <select class="form-control border border-primary" for="<?php echo base64_encode($ticket_no); ?>" style="font-size:16px; height:45px;" name="ticket_specimens" id="ticket_specimens">
+                                                            <option value="">...</option>
+                                                            <?php 
+                                                               if(!is_null($exist)){
+                                                               	$cond = array('ticket_no'=>$ticket_no,'finalized'=>'yes','process_completed'=>$proc_comp,'status'=>'active'); 
+                                                               	$specimens = $dbm->getFields($dbm->select('customer_specimen',$cond),array('sn','bill_type_id','specimen_sample')); 
+                                                               	$n = 0; $tcost = 0;  foreach($specimens['bill_type_id'] as $serial){ 
+                                                               	$bill_type = $dbm->getFields($dbm->select('bill_types',array('sn'=>$serial,'status'=>'active')),array('sn','name','categ_id','dept_id','price','estm_time','estm_time_type'));
+                                                               	 ?>
+                                                            <option value="<?php echo $serial; ?>"> <?php echo $bill_type['name'][0]; ?></option>
+                                                            <?php } ## ens foreach 
+                                                               }  ?> 
+                                                         </select>
+                                                      </div>
+                                                   </div>
+                                                   <!-- ./ col-sm-9 --> 
+                                                </div>
+                                                <!-- ./ form-group --> 
+                                                <p class="loader"> <span class="loader"> &nbsp;  </span></p>
+                                                <div class="process_content"></div>
+                                             </div>
+                                             <!-- ./ col-md-12 -->
+                                          </div>
+                                          <!-- ./ row -->
+                                       </div>
+                                       <!-- ./ card-body -->
+                                    </div>
+                                    <!-- ./ card -->
+                                    <p> &nbsp;  </p>
+                                    <div class="card">
+                                       <div class="card-header">
+                                          <div class="col-md-3 float-left"> <span class="bold text-info "> <i class="fa fa-bar-chart-o icon-lg "> </i>  </span>  </div>
+                                          <div class="col-md-9 float-left"> <span class="h5 bold text-info "> View Report Summary </span> &nbsp;&nbsp;&nbsp;&nbsp;  <span id="view_project_analysis" class=" fa fa-eye icon-lg pull-right text-info pointer"> </span> </div>
+                                       </div>
+                                       <!-- ./ card-header -->
+                                       <div class="card-body">
+                                          <div class="summary_result">
+                                          </div>
+                                          <!-- ./   -->
+                                       </div>
+                                       <!-- ./ card-body -->
+                                    </div>
+                                    <!-- ./ card -->
+                                 </div>
+                                 <!-- ./ col-md-8 -->
+                                 <div class="col-md-4 col-sm-4 col-xs-4">
+                                    <div class="card ">
+                                       <div class="card-header " style="padding-bottom:12px; margin-bottom:12px;">
+                                          <div class="col-md-3 float-left" style="padding:0px; margin:0px;"> <i class="mdi mdi-account icon-lg text-primary d-flex align-items-center"></i>  </div>
+                                          <div class="col-md-9  float-left"  style="padding:0px; margin:0px;">
+                                             <h4 class="card-title bold h3 font-20 text-info">  <?php echo $ticket_no;?> </h4>
+                                          </div>
+                                       </div>
+                                       <!-- ./ card-header -->
+                                       <div class="card-body ">
+                                          <ul class="text-capitalize  list-star font-13">
+                                             <li>  <span class="bold">  name: </span>	<span class="pull-right"> <?php echo $exist['fullname'][0];?>  </span>	</li>
+                                             <li>  <span class="bold">  age: </span>	<span class="pull-right">  <?php echo getAge($exist['age_text'][0]);?> </span>	</li>
+                                             <li>  <span class="bold">  sex: </span>	<span class="pull-right"> <?php echo $exist['sex'][0];?>  </span>	</li>
+                                             <li>  <span class="bold">  refered by: </span>	<span class="pull-right"> <?php echo $exist['doctor'][0];?>  </span>	</li>
+                                             <li>  <span class="bold">  address:  </span>	<span class="pull-right"> <?php echo $exist['hospital'][0];?>  </span>	</li>
+                                             <hr/>
+                                             <li>  <span class="bold">  Total Charges:  </span>	<span class="pull-right"> <?php echo "&#8358; ".number_format($exist['total_cost'][0]);?>  </span>	</li>
+                                             <li>  <span class="bold">  Discount: </span>	<span class="pull-right">  <?php echo "&#8358; ".number_format($exist['discount'][0]); ?> </span>	</li>
+                                             <li>  <span class="bold">  Amount Paid:  </span>	<span class="pull-right"> <?php echo "&#8358; ".number_format($exist['amount_paid'][0]);?>  </span>	</li>
+                                             <li>  <span class="bold">  Balance: </span>	<span class="pull-right"> <?php $balance = ($exist['total_cost'][0] - $exist['discount'][0] - $exist['amount_paid'][0]); echo "&#8358; ".number_format($balance);?>  </span>	</li>
+                                             <hr/>
+                                             <li>  <span class="bold">  date created:  </span>	<span class="pull-right"> <?php echo $func->format_date($exist['date_c'][0]);?>  </span>	</li>
+                                             <li>  <span class="bold">  time created:  </span>	<span class="pull-right"> <?php echo $func->format_date($exist['time_c'][0],'time');?>  </span>	</li>
+                                             <li>  <span class="bold">  created by:  </span>	<span class="pull-right"> <?php echo $exist['c_by'][0];?>  </span>	</li>
+                                          </ul>
+                                       </div>
+                                       <!-- ./ card-body -->
+                                    </div>
+                                    <!-- ./ card -->
+                                    <p> &nbsp; </p>
+                                 </div>
+                                 <!-- ./ col-md-4 -->
+                              </div>
+                              <!-- ./ row --> 
+                           </div>
+                           <!-- card-body -->
+                        </div>
+                        <!-- card -->
+                     </div>
+                     <!-- col-md-12 -->
+                  </div>
+                  <!-- row ends -->
+               </div>
+               <!-- content-wrapper ends -->
+               <?php require "footer.php"; ?>
+               <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+         </div>
+         <!-- page-body-wrapper ends -->
+      </div>
+      <!-- container-scroller -->
+      <?php require "bill_modal.php"; ?>
+      <?php require "admin_js_links.php"; ?>
+      <script src="../assets/js/lab_schedule_scripts.js"> </script>
+      <script src="../assets/js/billing_scripts.js"> </script>
+      <script src="../assets/js/shared/iCheck.js"></script> 
+      <!-- bootstrap check toggle (switch) 
+         <script src="../assets/toggle/js/bootstrap-toggle.js"> </script>
+         <script src="../assets/toggle/js/bootstrap.js"> </script>-->
+   </body>
+   <!---->
+   <script> 
+      $(function(){
+      	hide_update_buttons(); 
+      	  
+      	 loader('hide'); 
+      	 
+      	 // to display saved specimen 
+      	 elem = $('.pd');    
+      	 view_tickets('no',$('.pd'));
+      	 
+      });
+      
+   </script> 
+</html>

@@ -1,0 +1,271 @@
+<?php 
+		error_reporting(E_ALL^E_NOTICE);
+		require_once "../config/config.php";
+		require_once "../assets/php/dbTool.php";
+		require_once "../assets/php/DBController.php";
+		require_once "../assets/php/pdo_dal.php";
+		require_once "../assets/php/timecoder.php";
+		require_once "../assets/php/model.php";
+		require_once "../assets/php/User_1.php";
+		####
+		$dbm = new DbTool(); 
+		$mydbm = new DBController(); 
+		$mydal = new DAL(); $func = new functions(); 
+		
+		if(isset($_POST['display_unpaid_invoices'])) {
+                    $rawdetails = $_POST['details']; // ticket_no | name | tot_cost | amount_paid | discount | balance
+                    $details = explode("|", $rawdetails);
+                    $invoices = $dbm->getFields($dbm->select('hospital_invoice_report',array('status'=>'active','paym_completed'=>'no')),$mydal->TableFields('hospital_invoice_report'));
+                        $hosp_fields = $mydal->TableFields('hospitals'); 
+                        $accounts_fields = $mydal->TableFields('accounts'); 
+                        $banks_fields = $mydal->TableFields('banks'); 
+                        $tickets_fields = $mydal->TableFields('hospital_invoice'); 
+                        
+                        print " <div class='h4'> Create Invoice for <b>".$details[1]."</b> With Ticket No: <b>".$details[0]."</b> </div>";
+                        ?> <form method="post" >
+                        <table class="table table-sm w-75">
+                             <tr>
+                                <td align="right" class="bold"> Create From  </td>
+                                <td colspan="2"> 
+                                <div class="input-group ">									
+                                    <div class="icheck"> <label class="control-label" style="font-size: 16px;"> <input type="radio" name="invoice_type"  value="old" checked onchange="show_invoice_type('old_invoice')" class="radio search_type param_form invoice_type_selected" /> Existing Unpaid Invoice </label> &nbsp; &nbsp; &nbsp; </div>
+                                            <div class="icheck"><label class="control-label"  style="font-size: 16px;"> <input type="radio"  name="invoice_type"  value="new" onchange="show_invoice_type('new_invoice')" class="radio search_type text_form invoice_type_selected"/> New Invoice </label></div>
+                                    </div>
+                                </td>                                
+                            </tr>   
+                            <tr>
+                                <td align="right" class="bold"> Amount </td>
+                                <td class="bold"> <?php echo "&#8358;".number_format($details['2']);?> </td>
+                                <td> &nbsp; </td>
+                            </tr>  
+                            
+                            <tr class="old_invoice">
+                                <td align="right" class="bold"> Invoice No.  </td>
+                                <td colspan="2" class="bold font-18">
+                                    <div class="old_invoice_no"></div> 
+                                    <input type="hidden" id="invoice_no" value="" />
+                                    <input type="hidden" id="ticket_no" value="<?php echo $details[0]; ?>" />
+                                </td>
+                               
+                            </tr>  
+                            
+                            <tr class="new_invoice" >
+                                <td align="right" class="bold"> Select Hospital  </td>
+                                
+                                <td colspan="2" class="bold font-18"> 
+                                   <div class="form-group">                                         
+                                        <select name="hosp_id" id="hosp_id" class="hospitals font-16 w-50 form-control form-control-lg border border-primary" onchange="console.log($(this).val())"> 
+                                            <?php   $hosp = $dbm->getFields($dbm->select('hospitals',array(''),array('name'),'and','asc'),array('name','sn','address','contact_no')); 
+                                             ?> 
+						<optgroup label="Hospital">
+						<option value=""> ..... </option>
+						<?php	$n = 0; if(!is_null($hosp)) foreach ($hosp['name']  as $name){ ?>
+                                                    <option value="<?php echo $hosp['sn'][$n]; ?>" <?php echo ($_SESSION['hosp_id']==$hosp['sn'][$n])?"selected":"" ?>> <?php echo $name; ?></option>							
+						<?php $n ++; } ?>					 
+						</optgroup>						   
+                                        </select>						 
+                                    </div>  
+                                </td>
+                               
+                            </tr>  
+                            
+                            <tr class="new_invoice" >
+                                <td align="right" class="bold"> Account To Pay  </td>
+                                
+                                <td colspan="2" class="bold font-18"> 
+                                   <div class="form-group">                                         
+                                        <select name="invoice_account" id="invoice_account" class="invoice_account font-16 w-50 form-control form-control-lg border border-primary" onchange="console.log($(this).val())"> 
+                                        </select>						 
+                                    </div>  
+                                </td>
+                               
+                            </tr>  
+                            
+                            <tr>
+                                <td align="right" class="bold"> Discount Amount  </td>
+                                <td> <input type="number" name="discount_amount" id="discount_amount" class="form-control border border-primary w-75" style="font-size:18px; "/> </td>
+                                <td> <button type="button" onclick="validateInvoice()" class="btn btn-primary btn-lg w-100" data-text="<?php echo $rawdetails; ?>">Submit</button> </td>
+                            </tr>   
+                           
+                        </table>
+                        </form>
+                        
+                          <div class='h6 bold text-uppercase old_invoice'> <hr/> select the hospital from existing invoice
+                        
+                         <table class="table table-sm mt-3 w-100 old_invoice" >
+                            <tr class="bg-dark text-white">
+                                <td>SN</td>
+                                <td>Invoice No </td>
+                                <td>Total Cost </td>
+                                <td>Discount </td>
+                                <td>Final Cost </td>
+                                <td>Amount Paid </td>
+                            <td>Balance </td>
+                                <td>SELECT Hospital </td>
+                            </tr>
+                            <?php # show all invoices
+                                if(!is_null($invoices)) { $m = 0; 
+                                    foreach($invoices['hosp_id'] as $hosp_id){ 
+                                    $hosp_info = $dbm->getFields($dbm->select('hospitals',array('sn'=>$hosp_id,'status'=>'active')),$hosp_fields); // 
+                                    $acct_info =  $dbm->getFields($dbm->select('accounts',array('sn'=>$invoices['acct_id'][$m],'status'=>'active')),$accounts_fields);
+                                    $bank_info = $dbm->getFields($dbm->select('banks',array('sn'=>$acct_info['bank_id'][0])),$banks_fields);
+                                    $tickets = $dbm->getFields($dbm->select('hospital_invoice',array('status'=>'active','invoice_no'=>$invoices['invoice_no'][$m])),$tickets_fields);
+                                    ?>
+                            <tr>  
+                                <td> <?php echo ($m+1) ;?> </td> 
+                                <td>  <?php echo $invoices['invoice_no'][$m];?> </td>
+                              																	
+                                <td> <?php echo "&#8358; ".number_format($invoices['total_cost'][$m]); ?> </td>
+                                <td> <?php echo "&#8358; ".number_format($invoices['discount'][$m]); ?> </td>
+                                <td> <?php echo "&#8358; ".number_format($invoices['total_cost'][$m]-$invoices['discount'][$m]); ?> </td>
+                                <td> <?php echo "&#8358; ".number_format($invoices['amount_paid'][$m]); ?> </td>
+                                <td> <?php echo "&#8358; ".number_format($invoices['total_cost'][$m]-$invoices['discount'][$m]-$invoices['amount_paid'][$m]); ?> </td>                                
+                                <td> 								
+                                    <div class="input-group"><div class="icheck"> <label class="control-label"> <input type="radio" name="invoice_selected" value="<?php echo $invoices['invoice_no'][$m]."---".$hosp_info['name'][0]; ?>" onclick="highlight_to_add()"  class="radio add_to_exist_invoice" /> <?php print $hosp_info['name'][0]."</b> <br/>(".count($tickets['ticket_no'])." Patients)"; ?></label> </div></div>                                   
+                                </td> 									  
+                         </tr>
+                        <?php $m++; }
+                            } # end not null 
+                            ?>          
+                        </table>  
+               <?php }
+                
+                ?>
+
+    <?php 
+    
+        ### process invoice  now 
+        ###  process_invoice:'this',invoice_type:invoice_type,
+        ### hosp_id:hosp_id, invoice_no:invoice_no,discount:discount
+            if(isset($_POST['process_invoice'])){
+                $invoice_type = $dbm->clean($_POST['invoice_type']); # NEW / OLD 
+                $ticket_no = $dbm->clean($_POST['ticket_no']); #  
+                $hosp_id = $dbm->clean($_POST['invoice_type']); #  
+                $raw_invoice_no = $dbm->clean($_POST['invoice_no']); #  
+                $raw_invoice_no = explode("---", $raw_invoice_no); 
+                $invoice_no = $raw_invoice_no[0];
+                $discount = $dbm->clean($_POST['discount']); #   
+                $account = $dbm->clean($_POST['account']); #   
+                
+                switch ($invoice_type){
+                    case "old":{ 
+                        $past_invoice  = $dbm->getFields($dbm->select('hospital_invoice',array('invoice_no'=>$invoice_no,'inv_prepared'=>'yes','status'=>'active')),array('ticket_no','sn','invoice_no','hosp_id')); 
+			  if(!is_null($past_invoice)){ # check if exists
+                              $exists =  $dbm->select('hospital_invoice',array('ticket_no'=>$ticket_no,'status'=>'active')); 
+				if(empty($exists)){
+                                    # now save 
+                                    $data = array('hosp_id'=>$past_invoice['hosp_id'][0],'ticket_no'=>$ticket_no,'invoice_no'=>$invoice_no,'inv_prepared'=>'yes','c_by'=>$_SESSION['admUser'],'date_c'=>date('Y-m-d'),'time_c'=>date('H:i:s',time()-3600));
+                                    $dbm->insert('hospital_invoice',$data);
+                                    $dbm->updateTb('customer_tickets',array('discount'=>$discount),array('ticket_no'=>$ticket_no,'status'=>'active'));
+                                    # calc new balance 
+                                    $new_detils = calc_invoice_balance($invoice_no);
+                                    # update report 
+                                    $result = $dbm->updateTb('hospital_invoice_report',array('total_cost'=>$new_detils['t_cost'],
+						'discount'=>$new_detils['discount'],
+						'balance'=>$new_detils['balance']),
+						array('status'=>'active','invoice_no'=>$invoice_no));
+                                    
+                                     echo "<div class='alert alert-success'> <i class='fa fa-2x fa-check'></i> &nbsp;Ticket #$ticket_no Has Been Successfully Addedd  To Invoice #$invoice_no </div>"; 
+                                     print_r($new_detils);
+                                }
+                                else {
+                                    echo "<div class='alert alert-danger'> <i class='fa fa-2x fa-warning'></i> &nbsp; This Ticket #$ticket_no Belongs To Invoice #". $exists[0]['invoice_no']." </div>"; 
+                                }
+                    
+                             
+			  } ## end is null 
+                    } break; 
+                    case "new":{ 
+                        
+                    ####################################################
+                     $hosp_id = filter_var($_POST['hosp_id'],FILTER_SANITIZE_STRING);
+                     $acct_id = filter_var($_POST['account'],FILTER_SANITIZE_STRING);
+                     $acct_id = base64_decode($acct_id);
+			/***********************/
+			$ticket_fields = $mydal->TableFields('customer_tickets');
+			$invoice_exists = $dbm->getFields($dbm->select('hospital_invoice',array('ticket_no'=>$ticket_no,'status'=>'active')),array('ticket_no','invoice_no','hosp_id','sn'));
+			$account_info =  $dbm->getFields($dbm->select('accounts',array('sn'=>$acct_id,'status'=>'active')),array('bank_id','account_no','account_name','staff_id'));
+			$hosp_info =  $dbm->getFields($dbm->select('hospitals',array('sn'=>$hosp_id,'status'=>'active')),array('name','address','contact_no','sn'));
+			$t_cost = 0; $t_discount = 0;
+			/****************************/
+			 if(is_null($account_info)){
+				echo "<div class='alert alert-danger'> <i class='fa fa-2x fa-warning'></i> &nbsp; Cannot Create Invoice : Reason - <b>Account To Remit Not Found</b> </div>";	
+                            }
+                            else if(!empty ($invoice_exists)){
+                                echo "<div class='alert alert-danger'> <b> <i class='fa fa-2x fa-warning'></i> &nbsp; This Ticket #$ticket_no Is Already Scheduled for Invoice </b> </div>";	
+                            }
+			else {
+				$invoice_no = getInvoiceNo(); 
+                                
+                                $ticket_info = $dbm->resort($dbm->getFields($dbm->select('customer_tickets',array('ticket_no'=>$ticket_no,'status'=>'active')),$ticket_fields));
+					$t_cost = $ticket_info['total_cost'];
+					$t_discount = $discount;
+				
+                                $data = array('hosp_id'=>$hosp_id,'ticket_no'=>$ticket_no,'invoice_no'=>$invoice_no,'inv_prepared'=>'yes','c_by'=>$_SESSION['admUser'],'date_c'=>date('Y-m-d'),'time_c'=>date('H:i:s',time()-3600),'inv_prepared'=>'yes','invoice_no'=>$invoice_no,'prep_by'=>$_SESSION['admUser'],'date_prep'=>date('Y-m-d'),'time_prep'=>date('H:i:s',time()-3600));
+                                 
+                                $dbm->insert('hospital_invoice',$data);                                 
+				### invoice_report table 
+                                $dbm->insert('hospital_invoice_report',array('hosp_id'=>$hosp_id,'invoice_no'=>$invoice_no,'acct_id'=>$account,'total_cost'=>$t_cost,'discount'=>$t_discount,'c_by'=>$_SESSION['admUser'],'date_c'=>date('Y-m-d'),'time_c'=>date('H:i:s',time()-3600)));    
+                                ## message 
+                               	$text = "<i class='fa fa-2x fa-check'></i> &nbsp; Invoice #$invoice_no Was Created Successfully for ".$hosp_info['name'][0]." @ ".$hosp_info['address'][0]." with cost of N".number_format($t_cost)." and N".number_format($t_discount)." Discount";
+				echo "<div class='alert alert-success'> $text </div>";			
+                             }
+                                
+			##############################################
+                        
+                    } break; 
+                }
+               }
+               
+                    
+    
+            
+            
+            function getInvoiceNo(){ 
+				
+                $dbm =  new DbTool();  # database mgr.
+
+                $allReports = $dbm->getFields($dbm->select('hospital_invoice_report',array('status'=>'active')),array('sn','invoice_no','hosp_id'));
+
+                $tot = empty($allReports)?0:count($allReports['invoice_no']);
+
+                $lastNo = $tot-1;
+
+                $lastId = $allReports['invoice_no'][$lastNo];  // $con->getFields($lastApp,array('applc_id'));
+
+                // $ftcId  = $lastId['applc_id'][$lastNo];  // last fetched applc Id
+
+                $newNo = substr($lastId,4,strlen($lastId)) + 1;
+
+                $pretext = date('ym');
+
+                $newpad = str_pad($newNo,3,'0',STR_PAD_LEFT);
+
+                ## $newTranscId = "PHMR".str_pad($newNo,4,'0',STR_PAD_LEFT);
+
+                return trim($pretext."".$newpad);  
+        }
+        
+        function calc_invoice_balance($invoice_no){
+            $dbm = new DbTool(); $mydal = new DAL();
+            $tickets = $dbm->getFields($dbm->select('hospital_invoice',array('status'=>'active','invoice_no'=>$invoice_no)),$mydal->TableFields('hospital_invoice'));
+            $invoices = $dbm->getFields($dbm->select('hospital_invoice_report',array('invoice_no'=>$invoice_no,'status'=>'active')),$mydal->TableFields('hospital_invoice_report'));
+						
+            if(!is_null($tickets)){              
+                $fields = $mydal->TableFields('customer_tickets'); 
+            }	
+             $p = 0;  $t_cost = 0;  $t_discount = 0; foreach($tickets['ticket_no'] as $ticket_no ){ $bill_name ="";
+                //$cond = array('ticket_no'=>$ticket_no,'finalized'=>'yes','status'=>'active'); 
+                $cond = array('ticket_no'=>$ticket_no,'status'=>'active'); 
+                $ticket_info = $dbm->getFields($dbm->select('customer_tickets',$cond),$fields); 
+									
+                $t_cost +=  $ticket_info['total_cost'][0];
+                $t_discount +=  $ticket_info['discount'][0];
+                $init_pay = $invoices['amount_paid'][0]; 
+                $balance  = $t_cost - $t_discount - $init_pay;                           
+             }
+             return  ['t_cost'=>$t_cost,'t_discount'=>$t_discount,'balance'=>$balance];    
+								
+        }
+    
+    ?>

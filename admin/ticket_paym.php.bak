@@ -1,0 +1,222 @@
+<?php  require "usercheck.php";   ?> 
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <!-- Required meta tags -->
+      <?php require "admin_style_link.php";?>   <!-- --> 
+      <link rel="stylesheet" href="../assets/vendors/icheck/skins/all.css">
+   </head>
+   <body>
+      <div class="container-scroller">
+         <!-- partial:partials/_horizontal-navbar.html -->
+         <?php require "partials/_horizontal-navbar.php"; ?>
+         <!-- partial -->
+         <div class="container-fluid page-body-wrapper">
+            <div class="main-panel container">
+               <div class="content-wrapper">
+                  <div class="row">
+                     <div class="col-md-12 col-sm-12 col-xs-12 grid-margin stretch-card">
+                        <div class="card">
+                           <div class="card-body" style="height:auto">
+                              <h4 class="card-title bold h3">   <?php  echo $this_page['title']; ?>  </h4>
+                              <input id="user_temp_code" type="hidden" value="<?php echo $_SESSION['admUser']; ?>" />
+                              <ul class="nav nav-tabs tab-solid tab-solid-info tab-seperated bold" role="tablist">
+                                 <li class="nav-item " >
+                                    <a  class="nav-link active" onclick="view_tickets('no',$('.pd'))" id="tab1" data-toggle="tab" href="#stock-tab1" role="tab" aria-controls="stock-tab1" aria-selected="false"> Make Payment  / Print Receipt </a>
+                                 </li>
+                                 <!-- add event -- onclick="save_active_tab('tab4','stock')"  -->
+                                 <!-- <li class="nav-item ">
+                                    disabled 
+                                    <a class="nav-link "  id="tab2"  data-toggle="tab" href="#stock-tab2" role="tab" aria-controls="stock-tab2" aria-selected="false"> Payment History   </a>
+                                 </li>-->
+                                 <li class="nav-item ">
+                                    <!-- disabled -->
+                                    <a class="nav-link "  id="tab3"  data-toggle="tab" href="#stock-tab3" role="tab" aria-controls="stock-tab2" aria-selected="false"> Payment Summary </a>
+                                 </li>
+                              </ul>
+                              <div class="tab-content tab-content-solid">
+                                 <div class="tab-pane fade  show active" id="stock-tab1" role="tabpanel" aria-labelledby="stock-tab1">
+                                    <?php require "receipt_form.php"; ?> 
+                                 </div>
+                                 <!-- ./ tab-pane -->
+                                  <div class="tab-pane fade " id="stock-tab2" role="tabpanel" aria-labelledby="stock-tab2"> 								
+                                    <?php # require "paym_history_form.php"; ?> 
+                                 </div> 
+                                 <div class="tab-pane fade " id="stock-tab3" role="tabpanel" aria-labelledby="stock-tab3"> 								
+                                    <?php  require "acct_sum_form.php"; ?> 
+                                 </div>
+                              </div>
+                              <!-- ./ tab-content -->
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <?php # require "workflow_stats.php"?>
+                  </div>
+                  <!-- row ends -->
+               </div>
+               <!-- content-wrapper ends -->
+               <?php require "footer.php"; ?>
+               <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+         </div>
+         <!-- page-body-wrapper ends -->
+      </div>
+      <!-- container-scroller -->	
+      <?php require "admin_js_links.php"; ?>
+      <script src="../assets/js/shared/iCheck.js"></script> 
+      <script src="../assets/js/shared/widgets.js"></script> 
+      <script src="../assets/js/payment_chart.js"></script>  
+      <script src="../assets/js/payment_script.js"> </script>
+      <?php require "paymodal.php"; ?>                                                  
+      <?php require "bill_modal.php"; ?>
+   </body>
+   <!---->
+   <script> 
+      $(function(){
+      		 
+			 load_accounts($('select.account_form')); 
+			
+			// now make payment
+					/******************************/
+			$('#generate_receipt').on('click',function(ev){
+				ev.preventDefault(); 
+				ticket_no = $(this).attr('for'); 											
+				datas = $(this).attr('data-text'); 
+				infos = datas.split('|');  // ticket_no | name | tot_cost | amount_paid | discount | balance
+				elem = $('input:checkbox.mop:checked');
+				mop = []; amounts = []; account_dep = [];
+				proceed = true; var discount = $('input#discount').val();
+				if(elem.length == 0){
+					swal('Select Mode of Payment','By Cash, POS or Transfer','warning'); 
+					proceed = false; 
+				} 
+				else {
+				
+					$('input:checkbox.mop:checked').each(function() {
+						mop.push($(this).val()); 
+						box = $(this).closest('div.row').find('input:text'); 
+						accounts = $(this).closest('div.row').find('select.account_form'); 
+						if(box.val()=="" || !parseFloat(box.val())){
+							proceed = false; 
+							swal('Invalid Amount','Please Enter Valid Amount Paid By '+$(this).val(),'warning'); 
+						}
+						else if($(this).val()!="cash" && accounts.val()==""){
+							proceed = false; 
+							swal('No Account Selected','Please Please Select Account For '+$(this).val(),'warning'); 
+						}
+						else {
+							amounts.push(box.val()); 
+							account_dep.push(accounts.val()); 
+						} 
+					});
+				
+				  if(proceed){
+					/*********************/
+						var l = Ladda.create(this);  
+						/*********************/
+					var req = $.ajax({
+							url:"formsubmit.php", data:{ generate_receipt:'all',amounts:amounts, mop:mop,
+							datas:datas,account_dep:account_dep,discount:discount,auto_finalize:$('#auto_finalize:checked').val()}, method:"POST",
+							beforeSend: function(){  l.start(); } }); 
+						
+							req.fail(function(e){ console.log(" --- "+e.status+" Failed"); l.stop();
+
+						});
+					
+					req.done(function(res){ l.stop();  // alert(res);
+						var output = $.parseJSON(res);
+							// alert(res);	
+							$('#ticket_no').val(output['ticket_no']); $('#ticket_no').attr('ref',output['ticket_no']);
+							 swal({title:output['title'],text:output['text'],icon:output['icon']})
+							 .then((next)=>{
+								 if(output['icon']=="success"){		
+									$('input:checkbox.mop').prop('checked',false);
+									$('input:text.mop').val('');									
+									$('#billPaymentForm').modal('toggle');  // or  $('#billPaymentForm').modal().hide();									
+									$('#search_ticket').click();  
+								 }
+							 });
+						});
+					// alert('receipt saved  ++ '+ datas); 
+					}
+				}				
+			});
+		
+
+			 
+			
+				 
+    });
+    function manage_payment_box(data_text){ // 0		1		2			3			4			5
+		infos = data_text.split('|');  // ticket_no | name | tot_cost | amount_paid | discount | balance
+		$('span.customer_name').html(infos[1]+ " ("+infos[0]+" )");
+		$('span.tot_fee').html("&#8358; "+numberSeperator(infos[2])); 
+		$('span.init_pay').html("&#8358; "+numberSeperator(infos[3])); 		
+		$('input#discount').val(numberSeperator(infos[4])); 
+		$('span.balance').html("&#8358; "+numberSeperator(infos[5])); 
+		$('button#generate_receipt').attr('for',infos[0]);
+		
+		///
+		$('input#discount').attr('tot_fee',infos[2]); 
+		$('input#discount').attr('init_pay',infos[3]); 
+				
+		$('button#generate_receipt').attr('data-text',data_text);
+	}
+	
+	/**********************************************/ 
+	function load_accounts(elem){
+			spin = ""; 
+			var req = $.ajax({
+					url:"formsubmit.php", data:{ load_accounts:'all'}, method:"POST", 	beforeSend:function(){ elem.html(spin); } }); 
+				req.done(function(res){ 	elem.html(res);   }); // alert(res);
+		}
+	/**********************************************/ 
+	function rem_comma(txt){
+		var value  = txt.replaceAll(",","");
+		return value = parseInt(value);
+	}
+	
+	function reval(elem){
+		
+		var value =  rem_comma(elem.val()); 
+		
+		if(!parseInt(value)) { 
+			value = 0;
+			}
+		
+		elem.val(numberSeperator(value)); 	 		
+		 
+		 calc_amounts();
+		 
+		 
+		 /** Getting sum of numbers
+		 // const arr = [600, 660, 500];
+		// const sum = arr.reduce((a, b) => a + b, 0);444
+		
+			sum = 0;
+			for (let value of Object.values(amounts)) {
+			   sum+= value;
+			}
+			**/ 
+		
+		
+	}
+	
+	function calc_amounts(){
+		elem = $('input:checkbox.mop:checked');
+		sum = 0; 
+		if(elem.length > 0){
+			$('input:checkbox.mop:checked').each(function() {			
+				amounts = $(this).closest('div.row').find('input:text'); 				
+				sum+= rem_comma(amounts.val());
+			});		
+		}
+		if(!parseInt(sum)) sum = 0;
+		$("span.final_pay").html("<strong>"+numberSeperator(sum)+"</strong>");
+	}
+	
+   </script> 
+</html>

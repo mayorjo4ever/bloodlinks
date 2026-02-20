@@ -1,0 +1,55 @@
+<div class="row">
+ <div class="col-md-12 grid-margin">
+              <div class="card">
+                <div class="card-header header-sm">
+                  <div class="d-flex align-items-center">
+                    <h5 class="card-title font-weight-bold">Recent Orders</h5>
+                    <div class="wrapper ml-auto action-bar">
+                      <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuOutlineButton1"
+                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Today</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton1">
+                          <a class="dropdown-item" href="#">Today</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="#">Last 7 Days</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="#">This week</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <table id="order-listing-1" class="table table-striped w-100 dataTable">
+                    <thead>
+					<tr>
+                        <th>#</th>
+                        <th>Ticket No.</th>
+                        <th>Customer</th>                        
+                        <th>Total Cost</th>
+                        <th>Received By</th>
+                        <th>Processed</th>
+                        <th>Track No</th> 
+                      </tr>					  
+                    </thead>
+					<tbody>
+					<?php
+					$staff = new User('users');
+					$ystd = new DateTime("-3 Days");echo $today = $ystd->format('Y-m-d'); $tickets = $mydbm->runBaseQuery("SELECT * FROM customer_tickets WHERE date_c = '".$today."' AND status='active' AND finalized='yes' "); #  $dbm->getFields($dbm->select('customer_tickets',array('ticket_no'=>$ticket_no,'status'=>'active','finalized'=>'yes')),$mydal->TableFields('customer_tickets'));
+					if(!empty($tickets)) foreach($tickets as $k=>$v) { ?>				 
+                      <tr>
+						<td><?php echo ($k+1);?> </td>
+						<td><?php echo $tickets[$k]['ticket_no']; ?> </td>
+						<td><?php echo $tickets[$k]['fullname']; ?> </td>
+						<td><?php echo number_format($tickets[$k]['total_cost']); ?> </td>
+						<td><?php echo $staff->fullname($tickets[$k]['c_by']); ?> </td>
+						<td><?php echo $tickets[$k]['process_completed']; ?> </td>
+					  </tr>
+					  <?php } ?>
+					</tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+</div>
+ 
