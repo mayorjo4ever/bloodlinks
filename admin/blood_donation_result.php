@@ -125,7 +125,6 @@
                   $ticket_no = $dbm->clean(base64_decode($_REQUEST['r_val'])); # $spec_code = explode(',',$_REQUEST['spc']); // specimen code : yes
                   ## validate 
                   $criterial = array('ticket_no'=>$ticket_no,'status'=>'active');
-                 $criterial = array('ticket_no'=>$ticket_no,'status'=>'active');
                   $custom_info =  $dbm->select('customer_tickets',$criterial);
                    if(empty($custom_info)) { echo "<script> alert('Invalid Parameters'); window.location.href='tickets.php';  </script> ";
                    }
@@ -133,15 +132,15 @@
                   # print_r($custom_info[0]); 
                    ?> 
 
-				 <div class="card-body ">  <!--     -->
+		  <div class="card-body ">  <!--     -->
 
                      <div class="row">
                         <div class="col-sm-4 text-center"> <img src="../assets/images/login_2.jpg" class="no-print" style="height:160px"></div>
                         <div class="col-sm-8"><?php $branch = $mydbm->runBaseQuery("select branch_address from system_info"); echo $branch[0]['branch_address']; ?></div>
                       </div> 
 
-				  <div class="row mt-4">
-					<div class="col-md-12">  
+                <div class="row mt-4">
+                      <div class="col-md-12">  
                 <div style="border:2px solid #aaa; border-radius: 20px; padding: 10px 10px 20px 10px; margin-bottom: 20px;">
                <table class=" table-nogap table  border-none line-35" > <!-- cosmo -->
                     <tbody>

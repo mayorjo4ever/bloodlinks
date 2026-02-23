@@ -1572,11 +1572,13 @@
 												$n = 0;  if(!empty($specimens)){
 												$orders = []; 
 												 foreach($specimens as $sk=>$sv){ 
+                                                                                                     // print "<pre>";print_r($sv); 
 												 	$orders[] = $sv['order_type']; 
 												 	if($sv['order_type']=="perform_test"):
-														$bill_type = $dbm->getFields($dbm->select('bill_types',array('sn'=>$sv['bill_type_id'],'status'=>'active')),array('sn','name','categ_id','dept_id','price','estm_time','estm_time_type'));
+													 $bill_type = $dbm->getFields($dbm->select('bill_types',array('sn'=>$sv['bill_type_id'],'status'=>'active')),array('sn','name','categ_id','dept_id','price','estm_time','estm_time_type'));
+                                                                                                              // print_r($bill_type); print "</pre>";
 														 ?> <p>
-															<div class="icheck-square"> <label> <input type="checkbox" name="specimen_results_check[]" value="<?php echo base64_encode($sv['bill_type_id']); ?>" class="checkbox specimen_results_check" >  <?php echo $bill_type['name'][0]; ?> </label></div>												
+															<div class="icheck-square"> <label> <input type="checkbox" name="specimen_results_check[]" value="<?php echo base64_encode($sv['bill_type_id']); ?>" class="checkbox specimen_results_check" >  <?php echo $bill_type['name'][0]??""; ?> </label></div>												
 															</p>
 													<?php 
 													elseif($sv['order_type']=="donate_blood"): 
@@ -4224,7 +4226,8 @@
 	if(isset($_POST['auto_search_bill_for_ticket'])){ $dbm = new DbTool(); 
 		$word = $dbm->clean($_POST["keyword"]); 
 		if(!empty($word)) { 
-			$info = $dbm->regExpSearch('bill_types', array('name'=>$word),array('name'), " DESC ",'10');
+			$info = $mydbm->runBaseQuery("SELECT * FROM bill_types WHERE name LIKE '%". $word."%' AND status='active' ORDER BY name DESC LIMIT 10 ");
+			# $info = $dbm->regExpSearch('bill_types', array('name'=>$word),array('name'), " DESC ",'10');
 			if(!is_null($info)) $info = $dbm->getFields($info,array('name','categ_id','sn','dept_id','specimen_sample')); 
 			$tot = empty($info)?0:count($info['name']);
 			 if(!is_null($info)){
@@ -7412,7 +7415,7 @@
             $age = $difference->y." Year(s)"; 
         }                 
 
-        return  $age." and ".$date;
+        return  $age;
 
         endif;
     }

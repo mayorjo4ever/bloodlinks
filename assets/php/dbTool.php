@@ -811,8 +811,9 @@
 					  $wheres = empty($criterials)?"":array_map(function($elem){ return "$elem REGEXP ?";},array_keys($criterials));					
 					  if(!empty($order)) $ord = " ORDER BY ".join(" , ",$order)." ". $direction ;
 						else $ord = "";						
-					  $str = sprintf("SELECT * FROM %s %s %s %s",$table,empty($criterials)?"":"WHERE",join(' OR ',$wheres),$ord);
-					  $stm = $conn->prepare($str);			
+					  $str = sprintf("SELECT * FROM %s %s %s %s",$table,empty($criterials)?"":"WHERE",join(' AND ',$wheres),$ord);
+					  $stm = $conn->prepare($str);	
+                                 
 					  $stm->execute(array_values($criterials));				
 					  return  $res = $stm->fetchAll();			  
 				 }
