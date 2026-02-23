@@ -3793,7 +3793,7 @@
 		$pay_type = 'labtest';
 		$finalized ='yes';
 		$conds = array('pay_type'=>$pay_type,'year'=>$cur_year,'finalized'=>$finalized);
-		$allTransc = $dbm->getFields($dbm->select('customer_tickets',$conds),array('sn','ticket_no'));
+		$allTransc = $dbm->getFields($dbm->select('customer_tickets',$conds,['ticket_no'],'AND','DESC'),array('sn','ticket_no'));
 		
 		if(empty($allTransc)):
 		
